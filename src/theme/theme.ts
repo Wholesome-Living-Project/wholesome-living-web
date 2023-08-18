@@ -68,7 +68,7 @@ export const SPACING = 8;
 
 export const BACKGROUND_PADDING = 4 * SPACING;
 
-export const HEADER_HEIGHT = 75;
+export const SIDE_BAR_WIDTH_SMALL = 60;
 export const FOOTER_HEIGHT = 150;
 export const SIDEBAR_WIDTH = 250;
 export const MOBILE_SIDEBAR_HEIGHT = 75;

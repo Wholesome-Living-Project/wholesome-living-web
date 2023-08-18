@@ -1,95 +1,75 @@
-import { Flex, SPACING } from "axelra-styled-bootstrap-grid";
-import { PropsWithChildren } from "react";
+import { COLORS, SIDE_BAR_WIDTH_SMALL, SPACING } from "@/theme/theme";
+
+import OptionalLink from "@/components/OptionalLink";
+import Divider from "@/components/ui/Divider";
+import MeditationIcon from "@/components/ui/icons/MeditationIcon";
+import MenuIcon from "@/components/ui/icons/MenuIcon";
+import { UnstyledButton } from "@/components/ui/UnstyledButton";
+import { alpha } from "@/theme/alpha";
+import { Heading6 } from "@/theme/typography";
+import { Flex } from "axelra-styled-bootstrap-grid";
+import { cloneElement, ReactElement, useCallback, useState } from "react";
 import styled from "styled-components";
-import {
-  COLORS,
-  HEADER_HEIGHT,
-  OUTER_BORDER_RADIUS,
-  SIDEBAR_WIDTH,
-} from "../../theme/theme";
-import { Heading6 } from "../../theme/typography";
-import OptionalLink from "../OptionalLink";
 
-const FullWidthContainer = styled(Flex)`
-  z-index: 10;
-  height: ${HEADER_HEIGHT}px;
-  background-color: ${COLORS.WHITE};
-  border-radius: ${OUTER_BORDER_RADIUS}px;
+const MenuIconContainer = styled(UnstyledButton)`
+  padding: ${SPACING * 2}px 0;
   width: 100%;
-  border: solid 1px ${COLORS.GREY};
-
-  //NORMAL
-  @media only screen and (min-width: ${(p) => p.theme.breakPoints.sm}px) {
-    z-index: 10;
-    height: calc(100% - ${HEADER_HEIGHT}px);
-    width: ${SIDEBAR_WIDTH}px;
-    //flex-direction: row; //centered
-    flex-direction: column; //top
-    position: absolute;
-  }
-`;
-
-const HeaderContent = styled(Flex)`
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: ${SPACING * 2}px;
-  flex-wrap: wrap;
-  //padding-right: 112px;
-  //margin-left: -40px;
+  justify-content: center;
 `;
 
-const HeaderLinks = styled(Flex)`
-  gap: ${SPACING}px;
-  margin: 0;
-  padding: 0;
-  letter-spacing: 2px;
-  flex-wrap: wrap;
-  // remove gap between elements
-  grid-row-gap: 0;
-
-  @media only screen and (min-width: ${(p) => p.theme.breakPoints.sm}px) {
-    flex-direction: column;
-    align-items: flex-start;
-    padding-top: ${SPACING * 4}px;
-    letter-spacing: 4px;
-  }
+const LinkContainer = styled(Flex)`
+  padding: ${SPACING * 4}px 0;
+  gap: ${SPACING * 2}px;
 `;
 
-type MenuItemProps = {
-  link?: string;
-  onPress?: () => void;
-} & PropsWithChildren;
-const MenuItem = ({ link, children, onPress }: MenuItemProps) => (
-  <OptionalLink href={link}>
-    <Heading6 color={COLORS.BLACK} onClick={link ? undefined : onPress}>
-      {children}
-    </Heading6>
-  </OptionalLink>
-);
+const Container = styled(Flex)<{ open: boolean }>`
+  background: ${COLORS.BACKGROUND_GREY};
+  position: absolute;
+  height: 100%;
+  z-index: 1;
+  width: ${(p) => (p.open ? "unset" : SIDE_BAR_WIDTH_SMALL)}px;
+`;
 
-type RouteType = { link: string; text: string };
+type RouteType = { link: string; text: string; icon: ReactElement };
 const routes: RouteType[] = [
-  { link: "/", text: "Home" },
-  { link: "/settings", text: "Settings" },
-  { link: "/meditation", text: "Meditation" },
-  { link: "/finance", text: "Finance" },
+  { link: "/", text: "Home", icon: <MeditationIcon /> },
+  { link: "/settings", text: "Settings", icon: <MeditationIcon /> },
+  { link: "/meditation", text: "Meditation", icon: <MeditationIcon /> },
+  { link: "/finance", text: "Finance", icon: <MeditationIcon /> },
 ];
 
+const IconProps = {
+  color: COLORS.PRIMARY,
+  size: 30,
+};
+
 const SideBar = () => {
-  // TODO actually add this to the react lifecycle through redux or some other hook
+  // TODO add animation with framer motion.
+  const [open, setOpen] = useState(false);
+
+  const handleSidebar = useCallback(() => {
+    setOpen(!open);
+  }, [open]);
+
   return (
-    <FullWidthContainer row align={"center"}>
-      <HeaderContent>
-        <HeaderLinks row>
-          {routes.map((route) => (
-            <MenuItem key={route.text} link={route.link}>
-              {route.text}
-            </MenuItem>
-          ))}
-        </HeaderLinks>
-      </HeaderContent>
-    </FullWidthContainer>
+    <Container column align={"center"} open={open}>
+      <MenuIconContainer onClick={handleSidebar}>
+        <MenuIcon {...IconProps} />
+      </MenuIconContainer>
+
+      <Divider color={alpha(0.2, COLORS.PRIMARY)} />
+      <LinkContainer column>
+        {routes.map((route, i) => (
+          <OptionalLink href={route.link} key={i}>
+            <Flex row>
+              {cloneElement(route.icon, { ...IconProps })}{" "}
+              {open && <Heading6>{route.text}</Heading6>}
+            </Flex>
+          </OptionalLink>
+        ))}
+      </LinkContainer>
+    </Container>
   );
 };
 

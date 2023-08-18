@@ -6,7 +6,6 @@ export const unstyledButtonStyle = css`
   text-decoration: none;
   border: none;
   cursor: pointer;
-
   font: inherit;
   color: inherit;
   padding: 0;

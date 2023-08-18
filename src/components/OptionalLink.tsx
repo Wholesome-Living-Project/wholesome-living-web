@@ -1,24 +1,17 @@
-import Link from 'next/link'
-import { PropsWithChildren } from 'react'
-import styled from 'styled-components'
+import { UnstyledA } from "@/components/ui/UnstyledA";
+import Link from "next/link";
+import { PropsWithChildren } from "react";
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  &:focus,
-  &:hover,
-  &:visited,
-  &:link,
-  &:active {
-    text-decoration: none;
-  }
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-`
+type Props = { href?: string } & PropsWithChildren;
 
-type Props = { href?: string } & PropsWithChildren
 const OptionalLink = ({ href, children }: Props) => {
-  return href ? <StyledLink href={href}>{children}</StyledLink> : <>{children}</>
-}
+  return href ? (
+    <Link href={href} passHref legacyBehavior>
+      <UnstyledA>{children}</UnstyledA>
+    </Link>
+  ) : (
+    <>{children}</>
+  );
+};
 
-export default OptionalLink
+export default OptionalLink;

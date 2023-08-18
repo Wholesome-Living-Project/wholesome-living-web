@@ -1,16 +1,16 @@
-import { FlattenSimpleInterpolation } from 'styled-components'
+import { FlattenSimpleInterpolation } from "styled-components";
 import {
   EXTRA_LARGE_DEVICES_BREAK_POINT,
   LARGE_DEVICES_BREAK_POINT,
   MEDIUM_DEVICES_BREAK_POINT,
   SMALL_DEVICES_BREAK_POINT,
-} from '../../theme/makeTheme'
+} from "../../theme/constants";
 
 export enum __MEDIA_QUERY_BREAK_POINT {
-  SMALL = 'SMALL',
-  MEDIUM = 'MEDIUM',
-  LARGE = 'LARGE',
-  EXTRA_LARGE = 'EXTRA_LARGE',
+  SMALL = "SMALL",
+  MEDIUM = "MEDIUM",
+  LARGE = "LARGE",
+  EXTRA_LARGE = "EXTRA_LARGE",
 }
 
 const breaks = {
@@ -18,9 +18,14 @@ const breaks = {
   [__MEDIA_QUERY_BREAK_POINT.MEDIUM]: MEDIUM_DEVICES_BREAK_POINT,
   [__MEDIA_QUERY_BREAK_POINT.LARGE]: LARGE_DEVICES_BREAK_POINT,
   [__MEDIA_QUERY_BREAK_POINT.EXTRA_LARGE]: EXTRA_LARGE_DEVICES_BREAK_POINT,
-}
+};
 
-export const makeQuery = (key?: keyof typeof breaks, custom?: string | number) => {
+export const makeQuery = (
+  key?: keyof typeof breaks,
+  custom?: string | number
+) => {
   return (style: TemplateStringsArray | FlattenSimpleInterpolation | string) =>
-    `@media only screen and (min-width: ${key ? breaks[key] : custom}px) { ${style} }`
-}
+    `@media only screen and (min-width: ${
+      key ? breaks[key] : custom
+    }px) { ${style} }`;
+};

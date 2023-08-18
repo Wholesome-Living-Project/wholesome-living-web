@@ -1,17 +1,13 @@
-import { ResponsiveSpacer } from "axelra-react-utilities";
 import { Flex } from "axelra-styled-bootstrap-grid";
 import { PropsWithChildren } from "react";
 import styled from "styled-components";
-import { COLORS } from "../../theme/theme";
+import { COLORS, SPACING } from "../../theme/theme";
 import { Regular } from "../../theme/typography";
 import OptionalLink from "../OptionalLink";
 import { MaxWidthContainer } from "../ui/MaxWidthContainer";
 
-const FooterContent = styled(MaxWidthContainer)`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  letter-spacing: 4px;
+const Container = styled(Flex)`
+  padding: ${SPACING * 4}px 0;
 `;
 
 const FooterLinks = styled(Flex)`
@@ -39,8 +35,7 @@ const routes: RouteType[] = [];
 const Footer = () => {
   return (
     <MaxWidthContainer>
-      <ResponsiveSpacer x={4} lg={8} />
-      <FooterContent>
+      <Container row justify={"space-between"}>
         <FooterLinks column>
           {routes.map((route) => (
             <MenuItem key={route.text} link={route.link}>
@@ -51,9 +46,8 @@ const Footer = () => {
           <MenuItem link={"/"}>FAQ</MenuItem>
           <MenuItem link={"/"}>Privacy Policy</MenuItem>
         </FooterLinks>
-
         <MenuItem link={"/"}>ZKB</MenuItem>
-      </FooterContent>
+      </Container>
     </MaxWidthContainer>
   );
 };

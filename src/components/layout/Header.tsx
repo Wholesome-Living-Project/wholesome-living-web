@@ -1,66 +1,114 @@
-import { Flex, SPACING } from "axelra-styled-bootstrap-grid";
-import { PropsWithChildren } from "react";
-import styled from "styled-components";
-import { COLORS, HEADER_HEIGHT } from "../../theme/theme";
-import { Heading4 } from "../../theme/typography";
-import OptionalLink from "../OptionalLink";
-import { MaxWidthContainer } from "../ui/MaxWidthContainer";
-import { UnstyledButton } from "../ui/UnstyledButton";
+import OptionalLink from "@/components/OptionalLink";
+import useLightMode from "@/hooks/useLightMode";
+import { alpha } from "@/theme/alpha";
+import { SPACING } from "@/theme/theme";
+import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
+import {
+  Flex,
+  Heading,
+  IconButton,
+  Container as RadixContainer,
+  Separator,
+  Text,
+} from "@radix-ui/themes";
+import { useRouter } from "next/router";
+import styled, { useTheme } from "styled-components";
 
-const FullWidthContainer = styled(Flex)`
-  width: 100%;
-  position: absolute;
-  z-index: 10;
-  top: 0;
-  height: ${HEADER_HEIGHT}px;
-  background: ${COLORS.WHITE};
-  flex-direction: row;
+const HeaderLink = styled.div<{
+  active: boolean;
+  activeColor: string;
+  lightMode: boolean;
+}>`
+  padding: ${SPACING}px;
+  border-radius: 4px;
+  background: ${(p) => (p.active ? p.activeColor : "transparent")};
+
+  &:hover {
+    background: ${(p) =>
+      p.active ? p.activeColor : (p) => p.theme.colors.gray4};
+    cursor: pointer;
+  }
 `;
 
-const HeaderContent = styled(MaxWidthContainer)`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  letter-spacing: 4px;
+const HeaderLinkLabel = styled(Text)<{ active: boolean; lightMode: boolean }>`
+  color: ${(p) => (p.active ? p.theme.colors.gray1 : p.theme.colors.gray10)};
 `;
 
-const HeaderLinks = styled(Flex)`
-  gap: ${SPACING * 2}px;
-  margin: 0;
-  padding: 0;
-`;
+type NavigationLinkType = {
+  label: string;
+  link: string;
+};
 
-type MenuItemProps = {
-  link?: string;
-  onClick?: () => void;
-} & PropsWithChildren;
-const MenuItem = ({ link, children, onClick }: MenuItemProps) => (
-  <OptionalLink href={link}>
-    <UnstyledButton onClick={!link ? onClick : undefined}>
-      <Heading4 color={COLORS.BLACK}>{children}</Heading4>
-    </UnstyledButton>
-  </OptionalLink>
-);
-
-type RouteType = { link: string; text: string };
-const routes: RouteType[] = [];
+const navigationLinks: NavigationLinkType[] = [
+  {
+    link: "/",
+    label: "Dashboard",
+  },
+  {
+    link: "/analytics",
+    label: "Analytics",
+  },
+  {
+    link: "/about-us",
+    label: "About Us",
+  },
+];
 
 const Header = () => {
-  // TODO actually add this to the react lifecycle through redux or some other hook
+  const { toggleLightMode, lightMode } = useLightMode();
+  const router = useRouter();
+  const theme = useTheme();
 
   return (
-    <FullWidthContainer row align={"center"}>
-      <HeaderContent>
-        <HeaderLinks row>
-          {routes.map((route) => (
-            <MenuItem key={route.text} link={route.link}>
-              {route.text}
-            </MenuItem>
-          ))}
-          <MenuItem link={"/"}>Wholesome Living</MenuItem>
-        </HeaderLinks>
-      </HeaderContent>
-    </FullWidthContainer>
+    <Flex mb={"6"} direction={"column"}>
+      <RadixContainer my={"2"}>
+        <Flex direction={"row"} align={"center"} justify={"between"}>
+          <Flex direction={"row"} align={"center"} gap={"3"}>
+            <Heading
+              mr={"8"}
+              color={"gray"}
+              highContrast
+              size={"8"}
+              trim={"start"}
+            >
+              Wholesome
+            </Heading>
+            {navigationLinks.map((navLink, i) => (
+              <OptionalLink href={navLink.link} key={i}>
+                <HeaderLink
+                  activeColor={
+                    lightMode ? theme.colors.blackA12 : theme.colors.whiteA12
+                  }
+                  lightMode={lightMode}
+                  active={router.pathname === navLink.link}
+                >
+                  <HeaderLinkLabel
+                    trim={"both"}
+                    weight={"medium"}
+                    lightMode={lightMode}
+                    active={router.pathname === navLink.link}
+                  >
+                    {navLink.label}
+                  </HeaderLinkLabel>
+                </HeaderLink>
+              </OptionalLink>
+            ))}
+          </Flex>
+          <IconButton
+            size={"3"}
+            variant={"ghost"}
+            onClick={() => toggleLightMode()}
+          >
+            {lightMode ? (
+              <SunIcon color={alpha(0.7, "black")} />
+            ) : (
+              <MoonIcon color={alpha(0.7, "white")} />
+            )}
+          </IconButton>
+        </Flex>
+      </RadixContainer>
+      <Separator size="4" />
+    </Flex>
   );
 };
 
