@@ -49,8 +49,19 @@ const navigationAppLinks: NavigationLinkType[] = [
     link: "/app/analytics",
     label: "Analytics",
   },
+];
+
+const navigationRootLinks: NavigationLinkType[] = [
   {
-    link: "/app/about-us",
+    link: "/",
+    label: "Home",
+  },
+  {
+    link: "/wholesome-app",
+    label: "Wholesome App",
+  },
+  {
+    link: "/about-us",
     label: "About Us",
   },
 ];
@@ -85,29 +96,12 @@ const Header = ({ isHomeHeader }: Props) => {
               Wholesome
             </Heading>
           </OptionalLink>
-          {!isHomeHeader && (
-            <Flex direction={"row"} align={"center"} gap={"4"}>
-              {navigationAppLinks.map((navLink, i) => (
-                <OptionalLink href={navLink.link} key={i}>
-                  <HeaderLink
-                    activecolor={
-                      lightMode ? theme.colors.blackA12 : theme.colors.whiteA12
-                    }
-                    $active={router.pathname === navLink.link}
-                  >
-                    <HeaderLinkLabel
-                      trim={"both"}
-                      weight={"medium"}
-                      $lightMode={lightMode}
-                      $active={router.pathname === navLink.link}
-                    >
-                      {navLink.label}
-                    </HeaderLinkLabel>
-                  </HeaderLink>
-                </OptionalLink>
-              ))}
-            </Flex>
-          )}
+
+          <Links
+            links={isHomeHeader ? navigationRootLinks : navigationAppLinks}
+            lightMode={lightMode}
+          />
+
           <Flex gap={"6"} align={"center"}>
             {isHomeHeader && (
               <Flex gap={"3"}>
@@ -160,6 +154,38 @@ const Header = ({ isHomeHeader }: Props) => {
         </Flex>
       </RadixContainer>
       <Separator size="4" />
+    </Flex>
+  );
+};
+
+type LinksProps = {
+  links: NavigationLinkType[];
+  lightMode: boolean;
+};
+const Links = ({ links, lightMode }: LinksProps) => {
+  const router = useRouter();
+  const theme = useTheme();
+  return (
+    <Flex direction={"row"} align={"center"} gap={"4"}>
+      {links.map((navLink, i) => (
+        <OptionalLink href={navLink.link} key={i}>
+          <HeaderLink
+            activecolor={
+              lightMode ? theme.colors.blackA12 : theme.colors.whiteA12
+            }
+            $active={router.pathname === navLink.link}
+          >
+            <HeaderLinkLabel
+              trim={"both"}
+              weight={"medium"}
+              $lightMode={lightMode}
+              $active={router.pathname === navLink.link}
+            >
+              {navLink.label}
+            </HeaderLinkLabel>
+          </HeaderLink>
+        </OptionalLink>
+      ))}
     </Flex>
   );
 };
