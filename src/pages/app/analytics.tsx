@@ -1,4 +1,6 @@
+import AppLayout from "@/layouts/app.layout";
 import { Flex, Grid, Heading, Text } from "@radix-ui/themes";
+import { ReactElement } from "react";
 import styled from "styled-components";
 
 const FlexContainer = styled(Flex)`
@@ -25,6 +27,10 @@ const Analytics = () => {
 */}
     </FlexContainer>
   );
+};
+
+Analytics.getLayout = function getLayout(page: ReactElement) {
+  return <AppLayout>{page}</AppLayout>;
 };
 
 export default Analytics;

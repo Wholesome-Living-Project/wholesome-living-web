@@ -1,8 +1,8 @@
-import Header from "@/components/layout/Header";
 import { LightModeContext } from "@/hooks/useLightMode";
+import Providers from "@/providers/Providers";
 import Theme from "@/theme/mainTheme";
 import { GlobalStyle, SIDE_BAR_WIDTH_SMALL } from "@/theme/theme";
-import { Container, Flex, Theme as RadixTheme } from "@radix-ui/themes";
+import { Flex, Theme as RadixTheme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
 import { useToggle } from "@uidotdev/usehooks";
 import { NextPage } from "next";
@@ -11,13 +11,13 @@ import Head from "next/head";
 import { ReactElement, ReactNode } from "react";
 import styled from "styled-components";
 
-const Wrapper = styled(Flex)<{ lightMode: boolean }>`
+const Wrapper = styled(Flex)<{ $lightMode: boolean }>`
   position: relative;
   height: 100vh;
   background: linear-gradient(
     135deg,
-    ${(p) => (p.lightMode ? "#f8f8f8" : "#0c0c0c")},
-    ${(p) => (p.lightMode ? "#eaf2ff" : "#001c3d")}
+    ${(p) => (p.$lightMode ? "#f8f8f8" : "#0c0c0c")},
+    ${(p) => (p.$lightMode ? "#eaf2ff" : "#001c3d")}
   );
 `;
 
@@ -38,7 +38,8 @@ function Footer() {
 }
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  const [lightMode, toggleLightMode] = useToggle(true);
+  const [lightMode, toggleLightMode] = useToggle(false);
+  const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
     <>
@@ -56,17 +57,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             scaling="95%"
             hasBackground={false}
           >
-            <Wrapper lightMode={lightMode} direction={"column"} grow={"1"}>
-              <Flex direction={"row"} grow={"1"}>
-                <Flex direction={"column"} grow={"1"}>
-                  <Header />
-                  <Container>
-                    <Component {...pageProps} />
-                  </Container>
+            <Providers>
+              <Wrapper $lightMode={lightMode} direction={"column"} grow={"1"}>
+                <Flex direction={"row"} grow={"1"}>
+                  {getLayout(<Component {...pageProps} />)}
                 </Flex>
-              </Flex>
-              <Footer />
-            </Wrapper>
+                <Footer />
+              </Wrapper>
+            </Providers>
             {/*  <ThemePanel />*/}
           </RadixTheme>
         </Theme>
