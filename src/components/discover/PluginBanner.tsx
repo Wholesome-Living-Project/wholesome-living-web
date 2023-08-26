@@ -24,20 +24,19 @@ const Gradient = styled(Flex)<{ size?: number; color?: string }>`
 const PluginBanner = ({
   color,
   icon,
-  faIcon,
-  materialIcon,
-  ionIcon,
   size,
 }: PluginType & { size?: number }) => {
   return (
     <PluginContainer>
       <Gradient
-        size={50}
+        size={size}
         color={color}
         justify={"center"}
         align={"center"}
         row
-      ></Gradient>
+      >
+        {icon}
+      </Gradient>
     </PluginContainer>
   );
 };

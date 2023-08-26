@@ -1,40 +1,36 @@
+import { SettingsPluginName } from "@/api/openapi";
 import { EXTRA_COLORS } from "@/theme/theme";
+import { ReactNode } from "react";
 
-export enum plugins {
-  MEDITATE = "MEDITATE",
-  ELEVATOR = "ELEVATOR",
-  FINANCE = "FINANCE",
-}
-
-export const PLUGIN_COLORS: { [key in plugins]: string } = {
-  MEDITATE: EXTRA_COLORS.BLUE,
-  ELEVATOR: EXTRA_COLORS.PURPLE,
-  FINANCE: EXTRA_COLORS.FINA,
+export const PLUGIN_COLORS: { [key in SettingsPluginName]: string } = {
+  meditation: EXTRA_COLORS.BLUE,
+  elevator: EXTRA_COLORS.PURPLE,
+  finance: EXTRA_COLORS.FINA,
 };
 
 export type PluginType = {
-  title: string;
-  route: string;
+  title?: string;
+  route?: string;
   color?: string;
-  icon?: string;
+  icon?: ReactNode;
 };
 
-export const PLUGINS: { [key in plugins]: PluginType } = {
-  MEDITATE: {
+export const PLUGINS: { [key in SettingsPluginName]: PluginType } = {
+  meditation: {
     title: "Meditate",
-    color: PLUGIN_COLORS.MEDITATE,
+    color: PLUGIN_COLORS.meditation,
     icon: "meditation",
     route: "meditation",
   },
-  FINANCE: {
+  finance: {
     title: "Finance",
-    color: PLUGIN_COLORS.FINANCE,
+    color: PLUGIN_COLORS.finance,
     icon: "finance",
     route: "finance",
   },
-  ELEVATOR: {
+  elevator: {
     title: "Elevator",
-    color: PLUGIN_COLORS.ELEVATOR,
+    color: PLUGIN_COLORS.elevator,
     icon: "elevator-passenger",
     route: "elevator",
   },
