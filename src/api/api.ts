@@ -4,8 +4,8 @@ import { Configuration, UsersApi } from "./openapi";
 const openApiConfig = new Configuration();
 
 let baseURL =
-  process.env.BACKEND_ENV === "PROD"
-    ? "https://wholesome-living-backend-production.up.railway.app"
+  process.env.NEXT_PUBLIC_BACKEND_ENV === "PROD"
+    ? process.env.NEXT_PUBLIC_BACKEND_URL
     : `http://localhost:8080`;
 
 export const axiosInstance = axios.create({

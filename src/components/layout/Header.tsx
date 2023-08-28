@@ -118,7 +118,7 @@ const Header = ({ isHomeHeader }: Props) => {
                 <Button
                   onClick={() =>
                     createUserWithEmailAndPassword({
-                      email: "remus.nichiteanu@hotmail.com",
+                      email: "remus.nichiteanu123@hotmail.com",
                       password: "123456",
                       lastName: "Nichiteanu",
                       firstName: "Remus",
