@@ -14,10 +14,7 @@ const PluginList = () => {
   return (
     <Wrapper row>
       {Object.keys(PLUGINS).map((pluginKey) => (
-        <Plugin
-          key={pluginKey}
-          plugin={PLUGINS[pluginKey as SettingsPluginName]}
-        />
+        <Plugin key={pluginKey} plugin={pluginKey as SettingsPluginName} />
       ))}
     </Wrapper>
   );
