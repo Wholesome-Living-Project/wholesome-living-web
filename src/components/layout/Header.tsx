@@ -72,13 +72,10 @@ type Props = {
 
 const Header = ({ isHomeHeader }: Props) => {
   const { toggleLightMode, lightMode } = useLightMode();
-  const router = useRouter();
-  const theme = useTheme();
   const {
     createUserWithEmailAndPassword,
     signOutUser,
     signInWithEmailAndPassword,
-    user,
   } = useAuthentication();
 
   return (
@@ -103,33 +100,34 @@ const Header = ({ isHomeHeader }: Props) => {
           />
 
           <Flex gap={"6"} align={"center"}>
-            {isHomeHeader && (
-              <Flex gap={"3"}>
-                <Button
-                  onClick={() =>
-                    signInWithEmailAndPassword({
-                      email: "remus.nichiteanu@hotmail.com",
-                      password: "123456",
-                    })
-                  }
-                >
-                  Login
-                </Button>{" "}
-                <Button
-                  onClick={() =>
-                    createUserWithEmailAndPassword({
-                      email: "remus.nichiteanu123@hotmail.com",
-                      password: "123456",
-                      lastName: "Nichiteanu",
-                      firstName: "Remus",
-                      dateOfBirth: "2023-07-1996",
-                    })
-                  }
-                >
-                  Register
-                </Button>
-              </Flex>
-            )}
+            {isHomeHeader &&
+              process.env.NEXT_PUBLIC_DEACTIVATE_LOGIN_BUTTONS === "true" && (
+                <Flex gap={"3"}>
+                  <Button
+                    onClick={() =>
+                      signInWithEmailAndPassword({
+                        email: "remus.nichiteanu@hotmail.com",
+                        password: "123456",
+                      })
+                    }
+                  >
+                    Login
+                  </Button>{" "}
+                  <Button
+                    onClick={() =>
+                      createUserWithEmailAndPassword({
+                        email: "remus.nichiteanu123@hotmail.com",
+                        password: "123456",
+                        lastName: "Nichiteanu",
+                        firstName: "Remus",
+                        dateOfBirth: "2023-07-1996",
+                      })
+                    }
+                  >
+                    Register
+                  </Button>
+                </Flex>
+              )}
             {!isHomeHeader && (
               <IconButton
                 size={"3"}

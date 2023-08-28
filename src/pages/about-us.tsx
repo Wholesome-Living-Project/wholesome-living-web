@@ -14,11 +14,11 @@ const AboutUs = () => {
             Welcome to wholesome
           </Text>
           <Text color={"gray"} size={"3"}>
-            Hey there, welcome to Wholesome! We're a bunch of buddies from the
-            University of Zurich (UZH) who got together for a master's project
-            that turned into something awesome. Our goal? Creating a habit
-            tracking app that's not just about counting steps or bucks, but
-            about nailing those life goals while having a blast.
+            Hey there, welcome to Wholesome! We&#39;re a bunch of buddies from
+            the University of Zurich (UZH) who got together for a master&#39;s
+            project that turned into something awesome. Our goal? Creating a
+            habit tracking app that&#39;s not just about counting steps or
+            bucks, but about nailing those life goals while having a blast.
           </Text>
         </Flex>
         <Flex direction={"column"} gap={"1"}>
@@ -38,12 +38,12 @@ const AboutUs = () => {
             Our Mission
           </Text>
           <Text color={"gray"} size={"3"}>
-            Here at Wholesome, we're all about giving you the superpowers to
-            boss your life. It's not just about going for a jog or saving a few
-            coins. It's about nailing those habits that make life awesome. Our
-            app is like that buddy who's always got your back, reminding you to
-            hustle for your dreams and giving you high-fives when you crush your
-            goals.
+            Here at Wholesome, we&#39;re all about giving you the superpowers to
+            boss your life. It&#39;s not just about going for a jog or saving a
+            few coins. It&#39;s about nailing those habits that make life
+            awesome. Our app is like that buddy who&#39;s always got your back,
+            reminding you to hustle for your dreams and giving you high-fives
+            when you crush your goals.
           </Text>
         </Flex>
 
