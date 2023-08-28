@@ -1,4 +1,3 @@
-import FinanceView from "@/components/dashboard/Views/FinanceView";
 import PluginList from "@/components/discover/PluginList";
 import { COLORS, FILTER_HEIGHT, OUTER_BORDER_RADIUS } from "@/theme/theme";
 import { Col, Flex, SPACING } from "axelra-styled-bootstrap-grid";
@@ -40,7 +39,6 @@ const Finance = () => {
           </PluginContentContainer>
         </FilterContainer>
       </Col>
-      <FinanceView />
     </FlexContainer>
   );
 };

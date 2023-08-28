@@ -1,4 +1,5 @@
-import { plugins, PLUGINS } from "@/helpers/pluginList";
+import { SettingsPluginName } from "@/api/openapi";
+import { PLUGINS } from "@/helpers/pluginList";
 import { SPACING } from "@/theme/theme";
 import { Flex } from "axelra-styled-bootstrap-grid";
 import styled from "styled-components";
@@ -13,7 +14,10 @@ const PluginList = () => {
   return (
     <Wrapper row>
       {Object.keys(PLUGINS).map((pluginKey) => (
-        <Plugin key={pluginKey} plugin={PLUGINS[pluginKey as plugins]} />
+        <Plugin
+          key={pluginKey}
+          plugin={PLUGINS[pluginKey as SettingsPluginName]}
+        />
       ))}
     </Wrapper>
   );

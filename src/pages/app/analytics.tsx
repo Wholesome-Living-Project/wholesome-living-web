@@ -39,8 +39,16 @@ const Analytics = () => {
           icon={<Meditation />}
         />
         <SummaryCard tag={"Total Savings"} plugin={"finance"} icon={<Cash />} />
-        <SummaryCard tag={"Total Time Meditated"} icon={<Meditation />} />
-        <SummaryCard tag={"Total Time Meditated"} icon={<Meditation />} />
+        <SummaryCard
+          tag={"Total Time Meditated"}
+          plugin={"finance"}
+          icon={<Meditation />}
+        />
+        <SummaryCard
+          tag={"Total Time Meditated"}
+          plugin={"finance"}
+          icon={<Meditation />}
+        />
       </Grid>
       {/*<MeditationView />*/}
     </FlexContainer>

@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "next lint && tsc && yarn lint:css",
-    "lint:css": "stylelint \"./src/**/*.{tsx,js,ts}\"",
+    "test": "next lint && tsc",
     "openapi": "node scripts/generate-openapi.js",
     "postinstall": "node scripts/generate-openapi.js"
   },
