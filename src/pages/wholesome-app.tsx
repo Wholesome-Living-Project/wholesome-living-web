@@ -1,4 +1,5 @@
 import { UnstyledA } from "@/components/ui/UnstyledA";
+import useBreakPoints from "@/hooks/useBreakPoints";
 import useLightMode from "@/hooks/useLightMode";
 import MainLayout from "@/layouts/main.layout";
 import { Flex, Grid, Heading, Text } from "@radix-ui/themes";
@@ -30,8 +31,9 @@ const BadgeContainer = styled(Flex)`
 
 const WholesomeApp = () => {
   const { lightMode } = useLightMode();
+  const { isLessThanMedium } = useBreakPoints();
   return (
-    <Grid gap={"6"} columns={"2"}>
+    <Grid gap={"6"} columns={isLessThanMedium ? "1" : "2"}>
       <Flex direction={"column"} justify={"between"} gap={"6"}>
         <Heading color={"gray"} highContrast size={"9"}>
           The Wholesome Mobile App
@@ -71,6 +73,16 @@ const WholesomeApp = () => {
             positive habit cultivation.
           </Text>
         </Flex>
+        {isLessThanMedium && (
+          <ImageContainer>
+            <CoverImage
+              src={"/assets/images/app_preview.png"}
+              alt={"app preview"}
+              width={300}
+              height={300}
+            />
+          </ImageContainer>
+        )}
         <BadgeGrid columns={"2"} gap={"4"}>
           <BadgeContainer>
             <UnstyledA
@@ -102,13 +114,16 @@ const WholesomeApp = () => {
           </BadgeContainer>
         </BadgeGrid>
       </Flex>
-      <ImageContainer>
-        <CoverImage
-          src={"/assets/images/app_preview.png"}
-          alt={"app preview"}
-          fill={true}
-        />
-      </ImageContainer>
+
+      {!isLessThanMedium && (
+        <ImageContainer>
+          <CoverImage
+            src={"/assets/images/app_preview.png"}
+            alt={"app preview"}
+            fill
+          />
+        </ImageContainer>
+      )}
     </Grid>
   );
 };
