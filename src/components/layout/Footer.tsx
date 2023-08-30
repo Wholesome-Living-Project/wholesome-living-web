@@ -1,10 +1,15 @@
-import { Flex } from "axelra-styled-bootstrap-grid";
+import { UnstyledA } from "@/components/ui/UnstyledA";
+import useBreakPoints from "@/hooks/useBreakPoints";
+import {
+  Flex,
+  Container as RadixContainer,
+  Separator,
+  Text,
+} from "@radix-ui/themes";
 import { PropsWithChildren } from "react";
 import styled from "styled-components";
-import { COLORS, SPACING } from "../../theme/theme";
-import { Regular } from "../../theme/typography";
+import { SPACING } from "../../theme/theme";
 import OptionalLink from "../OptionalLink";
-import { MaxWidthContainer } from "../ui/MaxWidthContainer";
 
 const Container = styled(Flex)`
   padding: ${SPACING * 4}px 0;
@@ -23,9 +28,9 @@ type MenuItemProps = {
 } & PropsWithChildren;
 const MenuItem = ({ link, children, onClick }: MenuItemProps) => (
   <OptionalLink href={link}>
-    <Regular color={COLORS.BLACK} onClick={link ? undefined : onClick}>
+    <Text color={"gray"} highContrast onClick={link ? undefined : onClick}>
       {children}
-    </Regular>
+    </Text>
   </OptionalLink>
 );
 
@@ -33,22 +38,42 @@ type RouteType = { link: string; text: string };
 const routes: RouteType[] = [];
 
 const Footer = () => {
+  const { isLessThanMedium } = useBreakPoints();
   return (
-    <MaxWidthContainer>
-      <Container row justify={"space-between"}>
-        <FooterLinks column>
-          {routes.map((route) => (
-            <MenuItem key={route.text} link={route.link}>
-              {route.text}
-            </MenuItem>
-          ))}
-          <MenuItem link={"/"}>About us</MenuItem>
-          <MenuItem link={"/"}>FAQ</MenuItem>
-          <MenuItem link={"/"}>Privacy Policy</MenuItem>
-        </FooterLinks>
-        <MenuItem link={"/"}>ZKB</MenuItem>
-      </Container>
-    </MaxWidthContainer>
+    <Flex mt={"8"} direction={"column"}>
+      <Separator size="4" />
+      <RadixContainer mx={"4"}>
+        <Container direction={"row"} justify={"between"} align={"center"}>
+          <FooterLinks
+            direction={isLessThanMedium ? "column" : "row"}
+            justify={"between"}
+            gap={"4"}
+            grow={"1"}
+          >
+            {routes.map((route) => (
+              <MenuItem key={route.text} link={route.link}>
+                {route.text}
+              </MenuItem>
+            ))}
+            <MenuItem link={"/about-us"}>About us</MenuItem>
+            <MenuItem link={"/privacy-policy"}>Privacy Policy</MenuItem>
+            <UnstyledA target={"_blank"} href={"https://www.uzh.ch"}>
+              <Text color={"gray"} highContrast>
+                UZH
+              </Text>
+            </UnstyledA>
+            <UnstyledA
+              target={"_blank"}
+              href={"https://www.innovation.uzh.ch/"}
+            >
+              <Text color={"gray"} highContrast>
+                Innovation Hub
+              </Text>
+            </UnstyledA>
+          </FooterLinks>
+        </Container>
+      </RadixContainer>
+    </Flex>
   );
 };
 

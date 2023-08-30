@@ -28,14 +28,14 @@ const Plugin = ({ plugin }: { plugin: SettingsPluginName }) => {
     <Container>
       <PluginBanner
         {...PLUGINS[plugin as SettingsPluginName]}
-        size={50}
+        size={70}
         icon={
           plugin === "meditation" ? (
-            <Meditation />
+            <Meditation fontSize={"large"} />
           ) : plugin === "finance" ? (
-            <Cash />
+            <Cash fontSize={"large"} />
           ) : (
-            <Stairs />
+            <Stairs fontSize={"large"} />
           )
         }
       />

@@ -13,7 +13,8 @@ import styled from "styled-components";
 
 const Wrapper = styled(Flex)<{ $lightMode: boolean }>`
   position: relative;
-  height: 100vh;
+  min-height: 100vh;
+  height: 100%;
   background: linear-gradient(
     135deg,
     ${(p) => (p.$lightMode ? "#f8f8f8" : "#0c0c0c")},
@@ -58,7 +59,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             hasBackground={false}
           >
             <Providers>
-              <Wrapper $lightMode={lightMode} direction={"column"} grow={"1"}>
+              <Wrapper
+                $lightMode={lightMode}
+                direction={"column"}
+                grow={"1"}
+                pb={"8"}
+              >
                 <Flex direction={"row"} grow={"1"}>
                   {getLayout(<Component {...pageProps} />)}
                 </Flex>

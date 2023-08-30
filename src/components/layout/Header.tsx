@@ -1,8 +1,11 @@
 import OptionalLink from "@/components/OptionalLink";
+import MobileMenu from "@/components/layout/MobileMenu";
+import useBreakPoints from "@/hooks/useBreakPoints";
 import useLightMode from "@/hooks/useLightMode";
 import { useAuthentication } from "@/providers/AuthenticationProvider";
 import { alpha } from "@/theme/alpha";
 import { SPACING } from "@/theme/theme";
+import Burger from "@mui/icons-material/Menu";
 import { ExitIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import {
   Button,
@@ -31,6 +34,10 @@ const HeaderLink = styled.div<{
   }
 `;
 
+const BurgerIcon = styled(Burger)<{ lightMode?: boolean }>`
+  color: ${(p) => (p.lightMode ? "black" : "white")};
+`;
+
 const HeaderLinkLabel = styled(Text)<{ $active: boolean; $lightMode: boolean }>`
   color: ${(p) => (p.$active ? p.theme.colors.gray1 : p.theme.colors.gray10)};
 `;
@@ -51,7 +58,7 @@ const navigationAppLinks: NavigationLinkType[] = [
   },
 ];
 
-const navigationRootLinks: NavigationLinkType[] = [
+export const navigationRootLinks: NavigationLinkType[] = [
   {
     link: "/",
     label: "Home",
@@ -78,9 +85,11 @@ const Header = ({ isHomeHeader }: Props) => {
     signInWithEmailAndPassword,
   } = useAuthentication();
 
+  const { isLessThanMedium } = useBreakPoints();
+
   return (
-    <Flex mb={"6"} direction={"column"}>
-      <RadixContainer my={"3"}>
+    <Flex mb={"9"} direction={"column"}>
+      <RadixContainer my={"3"} mx={"4"}>
         <Flex direction={"row"} align={"center"} justify={"between"}>
           <OptionalLink href={"/"}>
             <Heading
@@ -94,61 +103,75 @@ const Header = ({ isHomeHeader }: Props) => {
             </Heading>
           </OptionalLink>
 
-          <Links
-            links={isHomeHeader ? navigationRootLinks : navigationAppLinks}
-            lightMode={lightMode}
-          />
-
-          <Flex gap={"6"} align={"center"}>
-            {isHomeHeader &&
-              process.env.NEXT_PUBLIC_DEACTIVATE_LOGIN_BUTTONS === "true" && (
-                <Flex gap={"3"}>
-                  <Button
-                    onClick={() =>
-                      signInWithEmailAndPassword({
-                        email: "remus.nichiteanu@hotmail.com",
-                        password: "123456",
-                      })
-                    }
+          {isLessThanMedium ? (
+            <MobileMenu>
+              <BurgerIcon
+                fontSize={"large"}
+                color={"inherit"}
+                lightMode={lightMode}
+              />
+            </MobileMenu>
+          ) : (
+            <>
+              <Links
+                links={isHomeHeader ? navigationRootLinks : navigationAppLinks}
+                lightMode={lightMode}
+              />
+              <Flex gap={"6"} align={"center"}>
+                {isHomeHeader &&
+                  process.env.NEXT_PUBLIC_DEACTIVATE_LOGIN_BUTTONS ===
+                    "true" && (
+                    <Flex gap={"3"}>
+                      <Button
+                        onClick={() =>
+                          signInWithEmailAndPassword({
+                            email: "remus.nichiteanu@hotmail.com",
+                            password: "123456",
+                          })
+                        }
+                      >
+                        Login
+                      </Button>{" "}
+                      <Button
+                        onClick={() =>
+                          createUserWithEmailAndPassword({
+                            email: "remus.nichiteanu123@hotmail.com",
+                            password: "123456",
+                            lastName: "Nichiteanu",
+                            firstName: "Remus",
+                            dateOfBirth: "2023-07-1996",
+                          })
+                        }
+                      >
+                        Register
+                      </Button>
+                    </Flex>
+                  )}
+                {!isHomeHeader && (
+                  <IconButton
+                    size={"3"}
+                    variant={"ghost"}
+                    onClick={() => signOutUser()}
                   >
-                    Login
-                  </Button>{" "}
-                  <Button
-                    onClick={() =>
-                      createUserWithEmailAndPassword({
-                        email: "remus.nichiteanu123@hotmail.com",
-                        password: "123456",
-                        lastName: "Nichiteanu",
-                        firstName: "Remus",
-                        dateOfBirth: "2023-07-1996",
-                      })
-                    }
-                  >
-                    Register
-                  </Button>
-                </Flex>
-              )}
-            {!isHomeHeader && (
-              <IconButton
-                size={"3"}
-                variant={"ghost"}
-                onClick={() => signOutUser()}
-              >
-                <ExitIcon color={alpha(0.7, lightMode ? "black" : "white")} />
-              </IconButton>
-            )}
-            <IconButton
-              size={"3"}
-              variant={"ghost"}
-              onClick={() => toggleLightMode()}
-            >
-              {lightMode ? (
-                <SunIcon color={alpha(0.7, "black")} />
-              ) : (
-                <MoonIcon color={alpha(0.7, "white")} />
-              )}
-            </IconButton>
-          </Flex>
+                    <ExitIcon
+                      color={alpha(0.7, lightMode ? "black" : "white")}
+                    />
+                  </IconButton>
+                )}
+                <IconButton
+                  size={"3"}
+                  variant={"ghost"}
+                  onClick={() => toggleLightMode()}
+                >
+                  {lightMode ? (
+                    <SunIcon color={alpha(0.7, "black")} />
+                  ) : (
+                    <MoonIcon color={alpha(0.7, "white")} />
+                  )}
+                </IconButton>
+              </Flex>
+            </>
+          )}
         </Flex>
       </RadixContainer>
       <Separator size="4" />
@@ -160,7 +183,7 @@ type LinksProps = {
   links: NavigationLinkType[];
   lightMode: boolean;
 };
-const Links = ({ links, lightMode }: LinksProps) => {
+export const Links = ({ links, lightMode }: LinksProps) => {
   const router = useRouter();
   const theme = useTheme();
   return (
