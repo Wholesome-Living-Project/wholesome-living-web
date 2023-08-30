@@ -62,6 +62,15 @@ const AboutUs = () => {
               "The Wholesome Squad"}
           </Text>
         </Flex>
+        <Flex direction={"column"} mt={"4"}>
+          <Text size={"4"} highContrast color={"gray"}>
+            Contact Us
+          </Text>
+          <Text color={"gray"}>
+            If you have any questions, You can contact us: Email:
+            info@innovation.uzh.ch
+          </Text>
+        </Flex>
       </Flex>
     </Grid>
   );
