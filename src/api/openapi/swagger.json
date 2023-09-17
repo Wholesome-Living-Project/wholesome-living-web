@@ -1,5 +1,4 @@
 {
-    "schemes": [],
     "swagger": "2.0",
     "info": {
         "description": "A backend for Wholesome Living written in Golang backend API using Fiber and MongoDB",
@@ -12,7 +11,6 @@
         },
         "version": "0.1"
     },
-    "host": "",
     "basePath": "/",
     "paths": {
         "/elevator": {
@@ -57,6 +55,18 @@
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "description": "Minimum amount of height gained",
+                        "name": "minGain",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum amount of height gained",
+                        "name": "maxGain",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "User ID",
                         "name": "userId",
@@ -67,7 +77,10 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/elevator.getElevatorResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/elevator.ElevatorDB"
+                            }
                         }
                     }
                 }
@@ -250,7 +263,10 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/meditation.getMeditationResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/meditation.MeditationDB"
+                            }
                         }
                     }
                 }
@@ -735,7 +751,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.createUserRequest"
+                            "$ref": "#/definitions/user.CreateUserRequest"
                         }
                     }
                 ],
@@ -779,33 +795,48 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "description": "delete a user by id.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Delete a user.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
             }
         }
     },
     "definitions": {
-        "elevator.createElevatorRequest": {
+        "elevator.ElevatorDB": {
             "type": "object",
             "properties": {
                 "amountStairs": {
                     "type": "integer"
                 },
-                "stairs": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "elevator.createElevatorResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                }
-            }
-        },
-        "elevator.getElevatorResponse": {
-            "type": "object",
-            "properties": {
-                "amountStairs": {
+                "heightGain": {
                     "type": "integer"
                 },
                 "id": {
@@ -818,6 +849,28 @@
                     "type": "integer"
                 },
                 "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "elevator.createElevatorRequest": {
+            "type": "object",
+            "properties": {
+                "amountStairs": {
+                    "type": "integer"
+                },
+                "heightGain": {
+                    "type": "integer"
+                },
+                "stairs": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "elevator.createElevatorResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
                     "type": "string"
                 }
             }
@@ -903,17 +956,6 @@
             "properties": {
                 "id": {
                     "type": "string"
-                }
-            }
-        },
-        "meditation.getMeditationResponse": {
-            "type": "object",
-            "properties": {
-                "meditations": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/meditation.MeditationDB"
-                    }
                 }
             }
         },
@@ -1135,7 +1177,7 @@
                 }
             }
         },
-        "user.createUserRequest": {
+        "user.CreateUserRequest": {
             "type": "object",
             "properties": {
                 "dateOfBirth": {

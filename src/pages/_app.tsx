@@ -1,14 +1,20 @@
 import { LightModeContext } from "@/hooks/useLightMode";
 import Providers from "@/providers/Providers";
 import Theme from "@/theme/mainTheme";
-import { GlobalStyle, SIDE_BAR_WIDTH_SMALL } from "@/theme/theme";
+import { GlobalStyle } from "@/theme/theme";
 import { Flex, Theme as RadixTheme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
-import { useToggle } from "@uidotdev/usehooks";
 import { NextPage } from "next";
 import { AppProps } from "next/app";
 import Head from "next/head";
-import { ReactElement, ReactNode } from "react";
+import {
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import "react-vis/dist/style.css";
 import styled from "styled-components";
 
 const Wrapper = styled(Flex)<{ $lightMode: boolean }>`
@@ -22,10 +28,6 @@ const Wrapper = styled(Flex)<{ $lightMode: boolean }>`
   );
 `;
 
-const SideBarPadder = styled(Flex)`
-  width: ${SIDE_BAR_WIDTH_SMALL}px;
-`;
-
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
@@ -34,13 +36,25 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-function Footer() {
-  return null;
-}
-
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  const [lightMode, toggleLightMode] = useToggle(false);
+  const [lightMode, setLightMode] = useState<boolean>(false);
+  const [appIsReady, setAppIsReady] = useState(false);
   const getLayout = Component.getLayout ?? ((page) => page);
+
+  const toggleLightMode = useCallback(
+    (lm: boolean) => {
+      if (lightMode === undefined) return;
+      setLightMode(!lightMode);
+      localStorage.setItem("lightMode", lm ? "true" : "false");
+    },
+    [lightMode]
+  );
+
+  useEffect(() => {
+    const lm = localStorage.getItem("lightMode");
+    setLightMode(lm === "true");
+    setAppIsReady(true);
+  }, []);
 
   return (
     <>
@@ -59,17 +73,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             hasBackground={false}
           >
             <Providers>
-              <Wrapper
-                $lightMode={lightMode}
-                direction={"column"}
-                grow={"1"}
-                pb={"8"}
-              >
-                <Flex direction={"row"} grow={"1"}>
-                  {getLayout(<Component {...pageProps} />)}
-                </Flex>
-                <Footer />
-              </Wrapper>
+              {appIsReady ? (
+                <Wrapper
+                  $lightMode={lightMode}
+                  direction={"column"}
+                  grow={"1"}
+                  pb={"8"}
+                >
+                  <Flex direction={"row"} grow={"1"}>
+                    {getLayout(<Component {...pageProps} />)}
+                  </Flex>
+                </Wrapper>
+              ) : null}
             </Providers>
             {/*  <ThemePanel />*/}
           </RadixTheme>

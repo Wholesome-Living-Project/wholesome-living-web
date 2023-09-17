@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 export const PLUGIN_COLORS: { [key in SettingsPluginName]: string } = {
   meditation: EXTRA_COLORS.BLUE,
   elevator: EXTRA_COLORS.PURPLE,
-  finance: EXTRA_COLORS.FINA,
+  finance: EXTRA_COLORS.SUNSET,
 };
 
 export type PluginType = {

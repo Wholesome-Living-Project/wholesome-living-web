@@ -1,5 +1,5 @@
-import { api } from "@/api/api";
 import { UserUpdateUserRequest, UserUserDB } from "@/api/openapi";
+import { api } from "@/api/requests";
 import {
   clearUserIdFromLocalStorage,
   getUserIdFromLocalStorage,

@@ -37,6 +37,12 @@ export interface ElevatorCreateElevatorRequest {
     'amountStairs'?: number;
     /**
      * 
+     * @type {number}
+     * @memberof ElevatorCreateElevatorRequest
+     */
+    'heightGain'?: number;
+    /**
+     * 
      * @type {boolean}
      * @memberof ElevatorCreateElevatorRequest
      */
@@ -58,37 +64,43 @@ export interface ElevatorCreateElevatorResponse {
 /**
  * 
  * @export
- * @interface ElevatorGetElevatorResponse
+ * @interface ElevatorElevatorDB
  */
-export interface ElevatorGetElevatorResponse {
+export interface ElevatorElevatorDB {
     /**
      * 
      * @type {number}
-     * @memberof ElevatorGetElevatorResponse
+     * @memberof ElevatorElevatorDB
      */
     'amountStairs'?: number;
     /**
      * 
+     * @type {number}
+     * @memberof ElevatorElevatorDB
+     */
+    'heightGain'?: number;
+    /**
+     * 
      * @type {string}
-     * @memberof ElevatorGetElevatorResponse
+     * @memberof ElevatorElevatorDB
      */
     'id'?: string;
     /**
      * 
      * @type {boolean}
-     * @memberof ElevatorGetElevatorResponse
+     * @memberof ElevatorElevatorDB
      */
     'stairs'?: boolean;
     /**
      * 
      * @type {number}
-     * @memberof ElevatorGetElevatorResponse
+     * @memberof ElevatorElevatorDB
      */
     'time'?: number;
     /**
      * 
      * @type {string}
-     * @memberof ElevatorGetElevatorResponse
+     * @memberof ElevatorElevatorDB
      */
     'userId'?: string;
 }
@@ -210,19 +222,6 @@ export interface MeditationCreateMeditationResponse {
      * @memberof MeditationCreateMeditationResponse
      */
     'id'?: string;
-}
-/**
- * 
- * @export
- * @interface MeditationGetMeditationResponse
- */
-export interface MeditationGetMeditationResponse {
-    /**
-     * 
-     * @type {Array<MeditationMeditationDB>}
-     * @memberof MeditationGetMeditationResponse
-     */
-    'meditations'?: Array<MeditationMeditationDB>;
 }
 /**
  * 
@@ -734,11 +733,13 @@ export const ElevatorApiAxiosParamCreator = function (configuration?: Configurat
          * @param {number} [endTime] end time
          * @param {number} [durationStart] duration start time
          * @param {number} [durationEnd] duration end time
+         * @param {number} [minGain] Minimum amount of height gained
+         * @param {number} [maxGain] Maximum amount of height gained
          * @param {string} [userId] User ID
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        elevatorGet: async (id?: string, startTime?: number, endTime?: number, durationStart?: number, durationEnd?: number, userId?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        elevatorGet: async (id?: string, startTime?: number, endTime?: number, durationStart?: number, durationEnd?: number, minGain?: number, maxGain?: number, userId?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/elevator`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -769,6 +770,14 @@ export const ElevatorApiAxiosParamCreator = function (configuration?: Configurat
 
             if (durationEnd !== undefined) {
                 localVarQueryParameter['durationEnd'] = durationEnd;
+            }
+
+            if (minGain !== undefined) {
+                localVarQueryParameter['minGain'] = minGain;
+            }
+
+            if (maxGain !== undefined) {
+                localVarQueryParameter['maxGain'] = maxGain;
             }
 
             if (userId != null) {
@@ -847,12 +856,14 @@ export const ElevatorApiFp = function(configuration?: Configuration) {
          * @param {number} [endTime] end time
          * @param {number} [durationStart] duration start time
          * @param {number} [durationEnd] duration end time
+         * @param {number} [minGain] Minimum amount of height gained
+         * @param {number} [maxGain] Maximum amount of height gained
          * @param {string} [userId] User ID
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async elevatorGet(id?: string, startTime?: number, endTime?: number, durationStart?: number, durationEnd?: number, userId?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ElevatorGetElevatorResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.elevatorGet(id, startTime, endTime, durationStart, durationEnd, userId, options);
+        async elevatorGet(id?: string, startTime?: number, endTime?: number, durationStart?: number, durationEnd?: number, minGain?: number, maxGain?: number, userId?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ElevatorElevatorDB>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.elevatorGet(id, startTime, endTime, durationStart, durationEnd, minGain, maxGain, userId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -885,12 +896,14 @@ export const ElevatorApiFactory = function (configuration?: Configuration, baseP
          * @param {number} [endTime] end time
          * @param {number} [durationStart] duration start time
          * @param {number} [durationEnd] duration end time
+         * @param {number} [minGain] Minimum amount of height gained
+         * @param {number} [maxGain] Maximum amount of height gained
          * @param {string} [userId] User ID
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        elevatorGet(id?: string, startTime?: number, endTime?: number, durationStart?: number, durationEnd?: number, userId?: string, options?: any): AxiosPromise<ElevatorGetElevatorResponse> {
-            return localVarFp.elevatorGet(id, startTime, endTime, durationStart, durationEnd, userId, options).then((request) => request(axios, basePath));
+        elevatorGet(id?: string, startTime?: number, endTime?: number, durationStart?: number, durationEnd?: number, minGain?: number, maxGain?: number, userId?: string, options?: any): AxiosPromise<Array<ElevatorElevatorDB>> {
+            return localVarFp.elevatorGet(id, startTime, endTime, durationStart, durationEnd, minGain, maxGain, userId, options).then((request) => request(axios, basePath));
         },
         /**
          * Creates a new elevator.
@@ -921,13 +934,15 @@ export class ElevatorApi extends BaseAPI {
      * @param {number} [endTime] end time
      * @param {number} [durationStart] duration start time
      * @param {number} [durationEnd] duration end time
+     * @param {number} [minGain] Minimum amount of height gained
+     * @param {number} [maxGain] Maximum amount of height gained
      * @param {string} [userId] User ID
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ElevatorApi
      */
-    public elevatorGet(id?: string, startTime?: number, endTime?: number, durationStart?: number, durationEnd?: number, userId?: string, options?: AxiosRequestConfig) {
-        return ElevatorApiFp(this.configuration).elevatorGet(id, startTime, endTime, durationStart, durationEnd, userId, options).then((request) => request(this.axios, this.basePath));
+    public elevatorGet(id?: string, startTime?: number, endTime?: number, durationStart?: number, durationEnd?: number, minGain?: number, maxGain?: number, userId?: string, options?: AxiosRequestConfig) {
+        return ElevatorApiFp(this.configuration).elevatorGet(id, startTime, endTime, durationStart, durationEnd, minGain, maxGain, userId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1287,7 +1302,7 @@ export const MeditationApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async meditationGet(id?: string, startTime?: number, endTime?: number, durationStart?: number, durationEnd?: number, userId?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MeditationGetMeditationResponse>> {
+        async meditationGet(id?: string, startTime?: number, endTime?: number, durationStart?: number, durationEnd?: number, userId?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<MeditationMeditationDB>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.meditationGet(id, startTime, endTime, durationStart, durationEnd, userId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1325,7 +1340,7 @@ export const MeditationApiFactory = function (configuration?: Configuration, bas
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        meditationGet(id?: string, startTime?: number, endTime?: number, durationStart?: number, durationEnd?: number, userId?: string, options?: any): AxiosPromise<MeditationGetMeditationResponse> {
+        meditationGet(id?: string, startTime?: number, endTime?: number, durationStart?: number, durationEnd?: number, userId?: string, options?: any): AxiosPromise<Array<MeditationMeditationDB>> {
             return localVarFp.meditationGet(id, startTime, endTime, durationStart, durationEnd, userId, options).then((request) => request(axios, basePath));
         },
         /**
@@ -2273,6 +2288,40 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
             };
         },
         /**
+         * delete a user by id.
+         * @summary Delete a user.
+         * @param {string} id User ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usersIdDelete: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('usersIdDelete', 'id', id)
+            const localVarPath = `/users/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * fetch a user by id.
          * @summary Get a user.
          * @param {string} id User ID
@@ -2404,6 +2453,17 @@ export const UsersApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * delete a user by id.
+         * @summary Delete a user.
+         * @param {string} id User ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usersIdDelete(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usersIdDelete(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * fetch a user by id.
          * @summary Get a user.
          * @param {string} id User ID
@@ -2457,6 +2517,16 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
             return localVarFp.usersGet(options).then((request) => request(axios, basePath));
         },
         /**
+         * delete a user by id.
+         * @summary Delete a user.
+         * @param {string} id User ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usersIdDelete(id: string, options?: any): AxiosPromise<object> {
+            return localVarFp.usersIdDelete(id, options).then((request) => request(axios, basePath));
+        },
+        /**
          * fetch a user by id.
          * @summary Get a user.
          * @param {string} id User ID
@@ -2506,6 +2576,18 @@ export class UsersApi extends BaseAPI {
      */
     public usersGet(options?: AxiosRequestConfig) {
         return UsersApiFp(this.configuration).usersGet(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * delete a user by id.
+     * @summary Delete a user.
+     * @param {string} id User ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UsersApi
+     */
+    public usersIdDelete(id: string, options?: AxiosRequestConfig) {
+        return UsersApiFp(this.configuration).usersIdDelete(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

@@ -20,8 +20,6 @@ const getApi = (basePath: string) => {
   };
 };
 
-export const api = getApi("");
-
 // can be used in reducers to check status of requests
 export enum RequestStatus {
   IDLE = "idle",

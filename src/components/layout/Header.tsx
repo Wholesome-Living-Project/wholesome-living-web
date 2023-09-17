@@ -47,7 +47,15 @@ type NavigationLinkType = {
   link: string;
 };
 
-const navigationAppLinks: NavigationLinkType[] = [
+export const navigationAppLinks: NavigationLinkType[] = [
+  {
+    link: "/",
+    label: "Home",
+  },
+  {
+    link: "/wholesome-app",
+    label: "Wholesome App",
+  },
   {
     link: "/app",
     label: "Dashboard",
@@ -104,7 +112,7 @@ const Header = ({ isHomeHeader }: Props) => {
           </OptionalLink>
 
           {isLessThanMedium ? (
-            <MobileMenu>
+            <MobileMenu isHomeHeader={isHomeHeader}>
               <BurgerIcon
                 fontSize={"large"}
                 color={"inherit"}
@@ -161,7 +169,7 @@ const Header = ({ isHomeHeader }: Props) => {
                 <IconButton
                   size={"3"}
                   variant={"ghost"}
-                  onClick={() => toggleLightMode()}
+                  onClick={() => toggleLightMode(!lightMode)}
                 >
                   {lightMode ? (
                     <SunIcon color={alpha(0.7, "black")} />
@@ -182,12 +190,13 @@ const Header = ({ isHomeHeader }: Props) => {
 type LinksProps = {
   links: NavigationLinkType[];
   lightMode: boolean;
+  direction?: "row" | "column";
 };
-export const Links = ({ links, lightMode }: LinksProps) => {
+export const Links = ({ links, lightMode, direction }: LinksProps) => {
   const router = useRouter();
   const theme = useTheme();
   return (
-    <Flex direction={"row"} align={"center"} gap={"4"}>
+    <Flex direction={direction} align={"center"} gap={"4"}>
       {links.map((navLink, i) => (
         <OptionalLink href={navLink.link} key={i}>
           <HeaderLink

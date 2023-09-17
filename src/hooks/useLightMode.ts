@@ -2,7 +2,7 @@ import { createContext, useContext } from "react";
 
 type LightContextType = {
   lightMode: boolean;
-  toggleLightMode: (lightMode?: boolean) => void;
+  toggleLightMode: (lightMode: boolean) => void;
 };
 
 export const LightModeContext = createContext<LightContextType>({

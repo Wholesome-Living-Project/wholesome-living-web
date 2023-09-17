@@ -33,10 +33,10 @@ const SummaryCard = ({ tag, change, icon, plugin, children }: Props) => {
           <CaptializedText {...defaultTextProps} size={"2"}>
             {tag}
           </CaptializedText>
-          <PluginBanner {...PLUGINS[plugin]} size={40} icon={icon} />
+          <PluginBanner {...PLUGINS[plugin]} size={30} icon={icon} />
         </Flex>
         <Heading {...defaultTextProps} mb={"3"}>
-          2h 50min
+          {children}
         </Heading>
         {change && change.amount > 0 && (
           <Flex gap={"2"} align={"center"}>

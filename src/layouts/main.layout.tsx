@@ -1,21 +1,17 @@
-import { RedirectIfAuthenticated } from "@/components/helpers/RedirectIfAuthenticated";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
+import { useUser } from "@/hooks/useUser";
 import { Container, Flex } from "@radix-ui/themes";
-import { PropsWithChildren, useEffect } from "react";
+import { PropsWithChildren } from "react";
 
 const MainLayout = ({ children }: PropsWithChildren) => {
-  useEffect(() => {});
-
+  const { firebaseUser } = useUser();
   return (
-    // @ts-ignore
     <Flex direction={"column"} grow={"1"}>
-      <Header isHomeHeader />
-      <RedirectIfAuthenticated>
-        <Container mx={"4"} mt={"4"}>
-          {children}
-        </Container>
-      </RedirectIfAuthenticated>
+      <Header isHomeHeader={!firebaseUser} />
+      <Container mx={"4"} mt={"4"}>
+        {children}
+      </Container>
       <Footer />
     </Flex>
   );

@@ -12,7 +12,6 @@ const Redirect = ({ redirectRoute }: Props) => {
     const redirect = async (route: string) => {
       await router.push(route);
     };
-    // TODO: add ui feedback that user has been redirected
     redirect(redirectRoute).then(() =>
       console.log("user has been redirected...")
     );
