@@ -1,5 +1,6 @@
 import Redirect from "@/components/helpers/Redirect";
 import { useUser } from "@/hooks/useUser";
+import { useAuthentication } from "@/providers/AuthenticationProvider";
 import { useLoadingGuard } from "@/providers/LoadingGuardProvider";
 import { Flex, SPACING } from "axelra-styled-bootstrap-grid";
 import { PropsWithChildren } from "react";
@@ -16,16 +17,17 @@ const LoadingWrapper = styled(Flex)`
 `;
 
 const RequiresAuthentication = ({ children }: PropsWithChildren) => {
-  const { firebaseUser, hasIdInLocalStorage } = useUser();
-  const { isInitialLoading } = useLoadingGuard();
+  const { user } = useAuthentication();
+  const { hasIdInLocalStorage } = useUser();
+  const { appIsReady } = useLoadingGuard();
 
   // don't remove the empty fragment for return -> will result in typescript undefined return error
-  if (firebaseUser?.uid || hasIdInLocalStorage) return <>{children}</>;
+  if (user?.id || hasIdInLocalStorage) return <>{children}</>;
 
-  if (isInitialLoading) return null;
+  if (!appIsReady) return null;
 
   // if user is not logged after initial load is done in redirect to home page and open login drawer
-  if (!isInitialLoading && !firebaseUser?.uid) {
+  if (appIsReady && user?.id) {
     return (
       <>
         <Redirect redirectRoute={"/"} />

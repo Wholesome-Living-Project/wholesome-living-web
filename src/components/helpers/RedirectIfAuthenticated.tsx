@@ -1,20 +1,20 @@
 import Redirect from "@/components/helpers/Redirect";
-import { useUser } from "@/hooks/useUser";
+import { useAuthentication } from "@/providers/AuthenticationProvider";
 import { useLoadingGuard } from "@/providers/LoadingGuardProvider";
 import { PropsWithChildren } from "react";
 
 export const RedirectIfAuthenticated = ({ children }: PropsWithChildren) => {
-  const { firebaseUser } = useUser();
-  const { isInitialLoading } = useLoadingGuard();
+  const { user } = useAuthentication();
+  const { appIsReady } = useLoadingGuard();
 
   // don't remove the empty fragment for return -> will result in typescript undefined return error
-  if (!firebaseUser?.uid) return <>{children}</>;
+  if (!user?.id) return <>{children}</>;
 
-  if (isInitialLoading) return null;
+  if (!appIsReady) return null;
 
   // if user is not logged after initial load is done in redirect to home page and open login drawer
   // TODO add UI feedback for redirecting
-  if (!isInitialLoading && firebaseUser?.uid) {
+  if (appIsReady && user?.id) {
     return (
       <>
         <Redirect redirectRoute={"/app"} />
