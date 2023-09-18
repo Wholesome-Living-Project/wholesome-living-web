@@ -13,6 +13,7 @@ import {
   FinanceGetInvestmentResponse,
 } from "@/api/openapi";
 import { api } from "@/api/requests";
+import { getLast7Days } from "@/components/helpers/getLast7Days";
 import { useAuthentication } from "@/providers/AuthenticationProvider";
 import { useOnboarding } from "@/providers/SettingsProvider";
 
@@ -23,6 +24,7 @@ type FinanceContentType = {
   aggregatedSpendings: number;
   aggregateSavings: number;
   resetFinanceData: () => void;
+  spendingsByDate: { x: string; y: number }[];
 };
 
 const FinanceContext = createContext<FinanceContentType>(
@@ -105,6 +107,37 @@ const useProvideFinance = (): FinanceContentType => {
     return savings;
   }, [spendings]);
 
+  const spendingsByDate = useMemo(() => {
+    // Initiate an empty object to store the aggregates
+    let aggregates: { [date: string]: number } = {};
+    const dates = getLast7Days();
+
+    // Initialize all dates with 0
+    dates.forEach((date) => {
+      aggregates[date.toISOString().slice(0, 10)] = 0;
+    });
+
+    // Filter investments within the last seven days
+    spendings.forEach((investment) => {
+      if (!investment.spendingTime) return;
+      let investmentDate = new Date(investment.spendingTime * 1000); // assuming spendingTime is a Unix timestamp, it is converted to JavaScript timestamp by multiplying by 1000
+      let dateStr = investmentDate.toISOString().slice(0, 10); // converting date to string format "YYYY-MM-DD"
+      if (aggregates.hasOwnProperty(dateStr)) {
+        aggregates[dateStr] += investment.amount || 0; // add the amount to the aggregate of the corresponding date
+      }
+    });
+
+    let dayNames: { x: string; y: number }[] = [];
+
+    for (let date in aggregates) {
+      let day = new Date(date);
+      let dayName = day.toLocaleDateString("en-US", { weekday: "short" }); // Change 'en-US' to your preferred locale if needed
+      dayNames.push({ x: dayName, y: aggregates[date] });
+    }
+
+    return dayNames.reverse();
+  }, [spendings]);
+
   useEffect(() => {
     console.log("getting spendings");
     getSpendings();
@@ -117,6 +150,7 @@ const useProvideFinance = (): FinanceContentType => {
     aggregateSavings,
     aggregatedSpendings,
     resetFinanceData,
+    spendingsByDate,
   };
 };
 

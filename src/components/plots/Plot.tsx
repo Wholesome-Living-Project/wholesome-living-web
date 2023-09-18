@@ -1,118 +1,97 @@
-import useDimensions from "@/hooks/useDimensions";
+import { SettingsPluginName } from "@/api/openapi";
+import PluginBanner from "@/components/discover/PluginBanner";
+import OptionalWrapWith from "@/components/helpers/OptionalWrapWith";
+import PlotWrapper, { DefaultPlotProps } from "@/components/plots/PlotWrapper";
+import DashboardCard from "@/components/ui/DashboardCard";
+import { defaultTextProps } from "@/helpers/defaultTextProps";
+import { PLUGIN_COLORS, PLUGINS } from "@/helpers/pluginList";
+import useLightMode from "@/hooks/useLightMode";
+import { alpha } from "@/theme/alpha";
+import { COLORS } from "@/theme/theme";
+import { Flex, Heading, Text } from "@radix-ui/themes";
+import { PropsWithChildren, ReactNode } from "react";
 import {
-  LARGE_DEVICES_BREAK_POINT,
-  MEDIUM_DEVICES_BREAK_POINT,
-  SMALL_DEVICES_BREAK_POINT,
-} from "@/theme/constants";
-import { PropsWithChildren, useMemo } from "react";
-import { XYPlot, XYPlotProps } from "react-vis";
+  HorizontalGridLines,
+  LineSeries,
+  LineSeriesPoint,
+  VerticalBarSeries,
+  VerticalGridLines,
+  XAxis,
+  YAxis,
+} from "react-vis";
+import styled from "styled-components";
 
-const PAGE_MARGIN = 32;
-const PAGE_MAX_WIDTH_INCLUDING_MARGIN = 1168;
+const CaptializedText = styled(Heading)`
+  text-transform: uppercase;
+`;
 
-enum sizes {
-  sm = "sm",
-  md = "md",
-  lg = "lg",
-  x = "x",
-}
-
-type PlotWidths = number | "full" | "threeQuarters" | "half" | "quarter";
-
-export type DefaultPlotProps = {
-  width: {
-    [key in sizes]?: PlotWidths;
-  } & {
-    x: PlotWidths;
-  };
-  height?: number;
+export type PlotProps = {
+  data: (any[] | LineSeriesPoint)[];
   showInCard?: boolean;
-} & Omit<XYPlotProps, "width" | "height">;
+  plugin: SettingsPluginName;
+  icon: ReactNode;
+  tag: string;
+  description?: string;
+  plotType?: "line" | "bar";
+} & DefaultPlotProps &
+  PropsWithChildren;
 
-type PlotParentProps = {
-  parentMargin?: number;
-  parentGap?: { [key in sizes]?: number } & {
-    x: number;
-  };
-};
-
-// This is an abstracted primitive inherited by all custom plots laying the foundation for plot components
 const Plot = ({
-  width,
-  height = 300,
-  parentMargin,
-  parentGap,
-  children,
+  data,
+  showInCard,
+  tag,
+  description,
+  plugin,
+  icon,
+  plotType = "line",
   ...rest
-}: DefaultPlotProps & PlotParentProps & PropsWithChildren) => {
-  const { width: windowWidth } = useDimensions();
+}: PlotProps) => {
+  const { lightMode } = useLightMode();
 
-  const widthConfig = useMemo(() => {
-    if (!windowWidth) return "x";
-    if (windowWidth < SMALL_DEVICES_BREAK_POINT && width.sm) return "sm";
-    if (windowWidth < MEDIUM_DEVICES_BREAK_POINT) return width.md ? "md" : "sm";
-    if (windowWidth < LARGE_DEVICES_BREAK_POINT)
-      return width.lg ? "lg" : width.md ? "md" : "sm";
-    return "x";
-  }, [width.lg, width.md, width.sm, windowWidth]);
-
-  const gapConfig = useMemo(() => {
-    if (!windowWidth) return "x";
-    if (windowWidth < SMALL_DEVICES_BREAK_POINT && parentGap?.sm) return "sm";
-    if (windowWidth < MEDIUM_DEVICES_BREAK_POINT)
-      return parentGap?.md ? "md" : "sm";
-    if (windowWidth < LARGE_DEVICES_BREAK_POINT)
-      return parentGap?.lg ? "lg" : parentGap?.md ? "md" : "sm";
-    return "x";
-  }, [parentGap?.lg, parentGap?.md, parentGap?.sm, windowWidth]);
-
-  // actually compute a pixel value for the plot width depending on the window width and the width config
-  const computedWidth = useMemo(() => {
-    const configWidth = width[widthConfig];
-    if (!windowWidth || !configWidth) return 0;
-    if (typeof configWidth === "string") {
-      switch (configWidth) {
-        case "full":
-          return (
-            Math.min(windowWidth, PAGE_MAX_WIDTH_INCLUDING_MARGIN) -
-            PAGE_MARGIN -
-            (parentMargin ? parentMargin * 2 : 0)
-          );
-        case "threeQuarters":
-          return (
-            (Math.min(windowWidth, PAGE_MAX_WIDTH_INCLUDING_MARGIN) -
-              PAGE_MARGIN -
-              (parentMargin ? parentMargin * 2 : 0)) *
-            0.75
-          );
-        case "half":
-          return (
-            (Math.min(windowWidth, PAGE_MAX_WIDTH_INCLUDING_MARGIN) -
-              PAGE_MARGIN -
-              (parentMargin ? parentMargin * 2 : 0)) *
-            0.5
-          );
-        default:
-          return (
-            (Math.min(windowWidth, PAGE_MAX_WIDTH_INCLUDING_MARGIN) -
-              PAGE_MARGIN -
-              (parentMargin ? parentMargin * 2 : 0)) *
-            0.25
-          );
-      }
-    } else {
-      return configWidth;
-    }
-  }, [parentMargin, width, widthConfig, windowWidth]);
+  const gridStyle = {
+    stroke: lightMode ? undefined : alpha(0.4, COLORS.WHITE),
+    strokeWidth: 0.8,
+  };
 
   return (
-    <XYPlot
-      {...rest}
-      height={height}
-      width={computedWidth - (parentGap?.[gapConfig] ?? 0)}
-    >
-      {children}
-    </XYPlot>
+    <OptionalWrapWith wrap={showInCard} component={<DashboardCard />}>
+      <Flex justify={"between"} mb={"4"}>
+        <Flex direction={"column"} gap={"1"}>
+          <CaptializedText {...defaultTextProps} size={"2"}>
+            {tag}
+          </CaptializedText>
+          <Text color={"gray"} size={"2"}>
+            {description}
+          </Text>
+        </Flex>
+        <PluginBanner {...PLUGINS[plugin]} size={30} icon={icon} />
+      </Flex>
+      <PlotWrapper
+        parentMargin={showInCard ? 10 : 0}
+        parentGap={showInCard ? { x: 28, md: 28 } : { x: 0 }}
+        {...rest}
+      >
+        <VerticalGridLines style={gridStyle} />
+        <HorizontalGridLines style={gridStyle} />
+        <XAxis style={gridStyle} />
+        <YAxis style={gridStyle} />
+        {data.length > 0 ? (
+          plotType === "bar" ? (
+            <VerticalBarSeries
+              barWidth={0.6}
+              data={data}
+              color={PLUGIN_COLORS[plugin]}
+            />
+          ) : (
+            <LineSeries data={data} color={PLUGIN_COLORS[plugin]} />
+          )
+        ) : (
+          <CaptializedText {...defaultTextProps} size={"2"}>
+            No Data
+          </CaptializedText>
+        )}
+      </PlotWrapper>
+    </OptionalWrapWith>
   );
 };
 

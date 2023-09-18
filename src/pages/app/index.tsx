@@ -1,21 +1,16 @@
 import SummaryCard from "@/components/analytics/SummaryCard";
-import { getLast7Days } from "@/components/helpers/getLast7Days";
-import LinePlot from "@/components/plots/LinePlot";
+import Plot from "@/components/plots/Plot";
+import MeditationIcon from "@/components/ui/icons/MeditationIcon";
 import AppLayout from "@/layouts/app.layout";
 import { useFinance } from "@/providers/FinanceProvider";
 import CashIcon from "@mui/icons-material/AttachMoney";
-import MeditationIcon from "@mui/icons-material/SelfImprovement";
 import { Flex, Grid, Heading, Text } from "@radix-ui/themes";
-import { ReactElement, useCallback, useMemo } from "react";
+import { ReactElement, useCallback } from "react";
 import styled from "styled-components";
 
 const FlexContainer = styled(Flex)`
   height: 100%;
   position: relative;
-`;
-
-const Meditation = styled(MeditationIcon)`
-  color: white;
 `;
 
 const Cash = styled(CashIcon)`
@@ -36,38 +31,7 @@ const data = [
 ];
 
 const Dashboard = () => {
-  const { spendings, saveSpending, getSpendings } = useFinance();
-
-  const spendingsByDate = useMemo(() => {
-    // Initiate an empty object to store the aggregates
-    let aggregates: { [date: string]: number } = {};
-    const dates = getLast7Days();
-
-    // Initialize all dates with 0
-    dates.forEach((date) => {
-      aggregates[date.toISOString().slice(0, 10)] = 0;
-    });
-
-    // Filter investments within the last seven days
-    spendings.forEach((investment) => {
-      if (!investment.spendingTime) return;
-      let investmentDate = new Date(investment.spendingTime * 1000); // assuming spendingTime is a Unix timestamp, it is converted to JavaScript timestamp by multiplying by 1000
-      let dateStr = investmentDate.toISOString().slice(0, 10); // converting date to string format "YYYY-MM-DD"
-      if (aggregates.hasOwnProperty(dateStr)) {
-        aggregates[dateStr] += investment.amount || 0; // add the amount to the aggregate of the corresponding date
-      }
-    });
-
-    let dayNames: { x: string; y: number }[] = [];
-
-    for (let date in aggregates) {
-      let day = new Date(date);
-      let dayName = day.toLocaleDateString("en-US", { weekday: "short" }); // Change 'en-US' to your preferred locale if needed
-      dayNames.push({ x: dayName, y: aggregates[date] });
-    }
-
-    return dayNames.reverse();
-  }, [spendings]);
+  const { spendingsByDate, saveSpending, getSpendings } = useFinance();
 
   const createFinanceEntry = useCallback(async () => {
     const newEntry = {
@@ -98,7 +62,7 @@ const Dashboard = () => {
         <SummaryCard
           tag={"Total Time Meditated"}
           plugin={"meditation"}
-          icon={<Meditation fontSize={"small"} />}
+          icon={<MeditationIcon color={"white"} fontSize={"small"} />}
         >
           30 min
         </SummaryCard>
@@ -112,28 +76,30 @@ const Dashboard = () => {
         <SummaryCard
           tag={"Total Time Meditated"}
           plugin={"meditation"}
-          icon={<Meditation fontSize={"small"} />}
+          icon={<MeditationIcon color={"white"} fontSize={"small"} />}
         />
         <SummaryCard
           tag={"Total Time Meditated"}
           plugin={"meditation"}
-          icon={<Meditation fontSize={"small"} />}
+          icon={<MeditationIcon color={"white"} fontSize={"small"} />}
         />
       </Grid>
       <Grid columns={{ md: "2", initial: "1" }} gap={"6"} mb={"6"}>
-        <LinePlot
+        <Plot
           width={{ x: "half", md: "full" }}
           plugin={"finance"}
           icon={<Cash fontSize={"small"} />}
           tag={"Total Spendings"}
+          description={"Your spendings over the last week"}
           //@ts-ignore
           data={spendingsByDate}
           xType={"ordinal"}
           showInCard
+          plotType={"bar"}
         />
-        <LinePlot
+        <Plot
           plugin={"meditation"}
-          icon={<Meditation fontSize={"small"} />}
+          icon={<MeditationIcon color={"white"} fontSize={"small"} />}
           tag={"Total Spendings"}
           width={{ x: "half", md: "full" }}
           data={data}
