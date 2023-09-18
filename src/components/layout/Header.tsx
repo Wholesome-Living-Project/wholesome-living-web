@@ -137,8 +137,7 @@ const Header = () => {
               />
               <Flex gap={"6"} align={"center"}>
                 {!firebaseUser &&
-                  process.env.NEXT_PUBLIC_DEACTIVATE_LOGIN_BUTTONS ===
-                    "true" && (
+                  process.env.NEXT_PUBLIC_ACTIVATE_LOGIN_BUTTONS === "true" && (
                     <Flex gap={"3"}>
                       <Modal
                         title={"Login"}
