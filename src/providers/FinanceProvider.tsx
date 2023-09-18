@@ -24,7 +24,17 @@ type FinanceContentType = {
   aggregatedSpendings: number;
   aggregateSavings: number;
   resetFinanceData: () => void;
-  spendingsByDate: { x: string; y: number }[];
+  spendingByWeekDay: { x: string; y: number }[];
+  loading: boolean;
+  totalSavings: number;
+  spendingsByDate: SpendingsTableType[];
+};
+
+export type SpendingsTableType = {
+  date: string;
+  spent: number;
+  saved: number;
+  category: string;
 };
 
 const FinanceContext = createContext<FinanceContentType>(
@@ -39,6 +49,7 @@ const useProvideFinance = (): FinanceContentType => {
   );
   const { user } = useAuthentication();
   const { selectedStrategy, roundUpNumber } = useOnboarding();
+  const [loading, setLoading] = useState(true);
 
   const getSaving = useCallback(
     (amount: number) => {
@@ -85,6 +96,8 @@ const useProvideFinance = (): FinanceContentType => {
       data && setSpendings(data.reverse());
     } catch (e) {
       console.log(e);
+    } finally {
+      setLoading(false);
     }
   }, [user?.id]);
 
@@ -107,7 +120,7 @@ const useProvideFinance = (): FinanceContentType => {
     return savings;
   }, [spendings]);
 
-  const spendingsByDate = useMemo(() => {
+  const spendingByWeekDay = useMemo(() => {
     // Initiate an empty object to store the aggregates
     let aggregates: { [date: string]: number } = {};
     const dates = getLast7Days();
@@ -138,8 +151,33 @@ const useProvideFinance = (): FinanceContentType => {
     return dayNames.reverse();
   }, [spendings]);
 
+  const totalSavings = useMemo(() => {
+    let savings = 0;
+    spendings.forEach((spending) => {
+      const saving = spending.saving;
+      if (saving) {
+        savings += saving;
+      }
+    });
+    return savings;
+  }, [spendings]);
+
+  const spendingsByDate: SpendingsTableType[] = useMemo(() => {
+    return spendings
+      .sort((a, b) =>
+        a.spendingTime && b.spendingTime ? b.spendingTime - a.spendingTime : 1
+      )
+      .map((spending) => {
+        return {
+          date: new Date(spending.spendingTime! * 1000).toLocaleDateString(),
+          spent: spending.amount ?? 0,
+          saved: spending.saving ?? 0,
+          category: spending.description ?? "-",
+        };
+      });
+  }, [spendings]);
+
   useEffect(() => {
-    console.log("getting spendings");
     getSpendings();
   }, [getSpendings]);
 
@@ -150,6 +188,9 @@ const useProvideFinance = (): FinanceContentType => {
     aggregateSavings,
     aggregatedSpendings,
     resetFinanceData,
+    spendingByWeekDay,
+    loading,
+    totalSavings,
     spendingsByDate,
   };
 };

@@ -18,14 +18,9 @@ const LoadingContext = createContext<LoadingType>({} as LoadingType);
 export const useLoadingGuard = () => useContext(LoadingContext);
 
 type Props = {
-  lightMode: boolean;
   setLightMode: (st: boolean) => void;
 } & PropsWithChildren;
-export const LoadingGuardProvider = ({
-  lightMode,
-  setLightMode,
-  children,
-}: Props) => {
+export const LoadingGuardProvider = ({ setLightMode, children }: Props) => {
   const { loading } = useAuthentication();
   const [appIsReady, setAppIsReady] = useState(false);
 

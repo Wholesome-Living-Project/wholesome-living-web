@@ -5,8 +5,17 @@ type Props = {
   password: string;
   setEmail: (email: string) => void;
   setPassword: (password: string) => void;
+  emailHint?: string;
+  passwordHint?: string;
 };
-const LoginForm = ({ setEmail, email, setPassword, password }: Props) => {
+const LoginForm = ({
+  setEmail,
+  email,
+  setPassword,
+  password,
+  passwordHint,
+  emailHint,
+}: Props) => {
   return (
     <Flex direction="column" gap="3">
       <label>
@@ -20,6 +29,11 @@ const LoginForm = ({ setEmail, email, setPassword, password }: Props) => {
           placeholder="Enter your Email"
           size={"3"}
         />
+        {emailHint && (
+          <Text size="1" color={"red"}>
+            {emailHint}
+          </Text>
+        )}
       </label>
       <label>
         <Text as="div" size="2" mb="1" weight="bold" color={"gray"}>
@@ -32,6 +46,11 @@ const LoginForm = ({ setEmail, email, setPassword, password }: Props) => {
           placeholder="Enter your Password"
           size={"3"}
         />
+        {passwordHint && (
+          <Text size="1" color={"red"}>
+            {passwordHint}
+          </Text>
+        )}
       </label>
     </Flex>
   );

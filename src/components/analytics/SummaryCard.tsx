@@ -21,6 +21,7 @@ type ChangeType = {
 type Props = {
   icon: ReactNode;
   tag: string;
+  description?: string;
   change?: ChangeType;
   plugin: SettingsPluginName;
 } & PropsWithChildren;

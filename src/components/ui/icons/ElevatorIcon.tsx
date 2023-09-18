@@ -1,15 +1,15 @@
-import Meditation from "@mui/icons-material/SelfImprovement";
+import Stairs from "@mui/icons-material/Stairs";
 import { IconProps } from "@mui/material";
 import styled from "styled-components";
 
 type IconType = Omit<IconProps, "color"> & { color?: string };
 
-const Icon = styled(Meditation)<IconType>`
+const Icon = styled(Stairs)<IconType>`
   color: ${(p) => p.color ?? "white"};
 `;
 
-const MeditationIcon = (props: IconType) => {
+const ElevatorIcon = (props: IconType) => {
   return <Icon {...props} />;
 };
 
-export default MeditationIcon;
+export default ElevatorIcon;

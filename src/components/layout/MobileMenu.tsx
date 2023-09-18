@@ -9,7 +9,7 @@ import { defaultTextProps } from "@/helpers/defaultTextProps";
 import useLightMode from "@/hooks/useLightMode";
 import { useAuthentication } from "@/providers/AuthenticationProvider";
 import { Button, Flex, Popover, Text } from "@radix-ui/themes";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 
 type Props = {
   isHomeHeader?: boolean;
@@ -17,6 +17,10 @@ type Props = {
   password: string;
   setEmail: (email: string) => void;
   setPassword: (password: string) => void;
+  emailHint?: string;
+  login?: () => Promise<void>;
+  passwordHint?: string;
+  loading?: boolean;
 } & PropsWithChildren;
 const MobileMenu = ({
   setPassword,
@@ -24,13 +28,18 @@ const MobileMenu = ({
   email,
   setEmail,
   isHomeHeader,
+  passwordHint,
+  emailHint,
+  login,
+  loading,
   children,
 }: Props) => {
   const { lightMode } = useLightMode();
-  const { signOutUser, signInWithEmailAndPassword } = useAuthentication();
+  const { signOutUser } = useAuthentication();
+  const [open, setOpen] = useState(false);
 
   return (
-    <Popover.Root>
+    <Popover.Root open={open} onOpenChange={(st) => setOpen(st)}>
       <Popover.Trigger>{children}</Popover.Trigger>
       <Popover.Content>
         <Flex
@@ -56,16 +65,17 @@ const MobileMenu = ({
                       setEmail={setEmail}
                       password={password}
                       setPassword={setPassword}
+                      emailHint={emailHint}
+                      passwordHint={passwordHint}
                     />
                   }
                   primaryButtonLabel={"Login"}
-                  onPrimaryButtonClick={() =>
-                    signInWithEmailAndPassword({
-                      email: email,
-                      password: password,
-                    })
-                  }
+                  onPrimaryButtonClick={async () => {
+                    await login?.();
+                    setOpen(false);
+                  }}
                   secondaryButtonLabel={"Cancel"}
+                  loading={loading}
                 >
                   <Button variant={"ghost"} size={"3"}>
                     Login
@@ -74,7 +84,14 @@ const MobileMenu = ({
               </Flex>
             )}
           {!isHomeHeader && (
-            <Button size={"3"} variant={"ghost"} onClick={() => signOutUser()}>
+            <Button
+              size={"3"}
+              variant={"ghost"}
+              onClick={() => {
+                signOutUser();
+                setOpen(false);
+              }}
+            >
               <Flex direction={"row"} gap={"1"} align={"center"}>
                 <Text {...defaultTextProps}>Logout</Text>
               </Flex>

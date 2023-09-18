@@ -1,9 +1,9 @@
 import { COLORS, SIDE_BAR_WIDTH_SMALL, SPACING } from "@/theme/theme";
 
-import OptionalLink from "@/components/OptionalLink";
 import Divider from "@/components/ui/Divider";
 import MeditationIcon from "@/components/ui/icons/MeditationIcon";
 import MenuIcon from "@/components/ui/icons/MenuIcon";
+import { UnstyledLink } from "@/components/ui/UnstyledA";
 import { UnstyledButton } from "@/components/ui/UnstyledButton";
 import { alpha } from "@/theme/alpha";
 import { Heading6 } from "@/theme/typography";
@@ -61,12 +61,12 @@ const SideBar = () => {
       <Divider color={alpha(0.2, COLORS.PRIMARY)} />
       <LinkContainer column>
         {routes.map((route, i) => (
-          <OptionalLink href={route.link} key={i}>
+          <UnstyledLink href={route.link} key={i}>
             <Flex row>
               {cloneElement(route.icon, { ...IconProps })}{" "}
               {open && <Heading6>{route.text}</Heading6>}
             </Flex>
-          </OptionalLink>
+          </UnstyledLink>
         ))}
       </LinkContainer>
     </Container>

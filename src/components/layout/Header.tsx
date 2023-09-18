@@ -1,7 +1,8 @@
-import OptionalLink from "@/components/OptionalLink";
 import MobileMenu from "@/components/layout/MobileMenu";
 import LoginForm from "@/components/ui/LoginForm";
 import Modal from "@/components/ui/Modal";
+import { UnstyledLink } from "@/components/ui/UnstyledA";
+import { validateEmail } from "@/helpers/validateEmail";
 import useBreakPoints from "@/hooks/useBreakPoints";
 import useLightMode from "@/hooks/useLightMode";
 import { useUser } from "@/hooks/useUser";
@@ -20,7 +21,7 @@ import {
   Text,
 } from "@radix-ui/themes";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import styled, { useTheme } from "styled-components";
 
 const HeaderLink = styled.div<{
@@ -93,27 +94,84 @@ const Header = () => {
   const { toggleLightMode, lightMode } = useLightMode();
   const { firebaseUser } = useUser();
   const { signOutUser, signInWithEmailAndPassword } = useAuthentication();
+  const [loadingLogin, setLoadingLogin] = useState(false);
+  const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [emailHint, setEmailHint] = useState<string>("");
+  const [passwordHint, setPasswordHint] = useState<string>("");
+
   const { isLessThanMedium } = useBreakPoints();
+
+  const login = useCallback(async () => {
+    if (!validateEmail(email)) {
+      setEmailHint("Please enter a valid email address.");
+      throw "Invalid email";
+    } else {
+      if (emailHint) setEmailHint("");
+    }
+    if (password.length === 0) {
+      setPasswordHint("Please enter a valid password.");
+      throw "Invalid password";
+    } else {
+      if (passwordHint) setPasswordHint("");
+    }
+    setLoadingLogin(true);
+    const user = await signInWithEmailAndPassword({
+      email: email,
+      password: password,
+    });
+    setLoadingLogin(false);
+    if (!user) {
+      setPasswordHint("Email or password is incorrect");
+      throw "No user found";
+    } else {
+      if (passwordHint) setPasswordHint("");
+    }
+
+    await router.push("/app");
+  }, [
+    email,
+    emailHint,
+    password,
+    passwordHint,
+    router,
+    signInWithEmailAndPassword,
+  ]);
 
   return (
     <Flex mb={"9"} direction={"column"}>
-      <RadixContainer my={"3"} mx={"4"}>
+      <RadixContainer mt={"4"} mb={"3"} mx={"4"}>
         <Flex direction={"row"} align={"center"} justify={"between"}>
-          <OptionalLink href={"/"}>
+          <Flex direction={"row"} align={"end"} gap={"2"} justify={"start"}>
+            <UnstyledLink href={"/"}>
+              <Heading
+                color={"gray"}
+                highContrast
+                size={"8"}
+                trim={"start"}
+                style={{
+                  userSelect: "none",
+                }}
+              >
+                Wholesome
+              </Heading>
+            </UnstyledLink>
+
             <Heading
-              mr={"8"}
               color={"gray"}
-              highContrast
-              size={"8"}
-              trim={"start"}
+              size={"3"}
+              style={{
+                visibility: router.pathname === "/app" ? "visible" : "collapse",
+                cursor: "default",
+                userSelect: "none",
+              }}
             >
-              Wholesome
+              Analytics
             </Heading>
-          </OptionalLink>
+          </Flex>
 
           {isLessThanMedium ? (
             <MobileMenu
@@ -122,6 +180,10 @@ const Header = () => {
               setEmail={setEmail}
               password={password}
               setPassword={setPassword}
+              emailHint={emailHint}
+              passwordHint={passwordHint}
+              login={login}
+              loading={loadingLogin}
             >
               <BurgerIcon
                 fontSize={"large"}
@@ -144,21 +206,19 @@ const Header = () => {
                         description={
                           "Use your wholesome living account to log in"
                         }
+                        loading={loadingLogin}
                         content={
                           <LoginForm
                             email={email}
                             setEmail={setEmail}
                             password={password}
                             setPassword={setPassword}
+                            emailHint={emailHint}
+                            passwordHint={passwordHint}
                           />
                         }
                         primaryButtonLabel={"Login"}
-                        onPrimaryButtonClick={() =>
-                          signInWithEmailAndPassword({
-                            email: email,
-                            password: password,
-                          })
-                        }
+                        onPrimaryButtonClick={login}
                         secondaryButtonLabel={"Cancel"}
                       >
                         <Button>Login</Button>
@@ -208,7 +268,7 @@ export const Links = ({ links, lightMode, direction }: LinksProps) => {
   return (
     <Flex direction={direction} align={"center"} gap={"4"}>
       {links.map((navLink, i) => (
-        <OptionalLink href={navLink.link} key={i}>
+        <UnstyledLink href={navLink.link} key={i}>
           <HeaderLink
             activecolor={
               lightMode ? theme.colors.blackA12 : theme.colors.whiteA12
@@ -224,7 +284,7 @@ export const Links = ({ links, lightMode, direction }: LinksProps) => {
               {navLink.label}
             </HeaderLinkLabel>
           </HeaderLink>
-        </OptionalLink>
+        </UnstyledLink>
       ))}
     </Flex>
   );

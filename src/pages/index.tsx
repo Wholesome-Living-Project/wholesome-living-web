@@ -1,5 +1,5 @@
-import TextWithImageSection from "@/components/dashboard/TextWithImageSection";
 import PluginList from "@/components/discover/PluginList";
+import TextWithImageSection from "@/components/home/TextWithImageSection";
 import MainLayout from "@/layouts/main.layout";
 import { Flex, Grid, Heading, Text } from "@radix-ui/themes";
 import { ReactElement } from "react";

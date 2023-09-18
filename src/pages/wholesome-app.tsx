@@ -86,7 +86,9 @@ const WholesomeApp = () => {
         <BadgeGrid columns={"2"} gap={"4"}>
           <BadgeContainer>
             <UnstyledA
-              href={"https://www.apple.com/app-store/"}
+              href={
+                "https://apps.apple.com/ch/app/wholesome-living/id6463798651"
+              }
               target={"_blank"}
             >
               <Badge
@@ -103,7 +105,9 @@ const WholesomeApp = () => {
           </BadgeContainer>
           <BadgeContainer>
             <UnstyledA
-              href={"https://play.google.com/store/"}
+              href={
+                "https://play.google.com/store/apps/details?id=com.wholesomeliving.app"
+              }
               target={"_blank"}
             >
               <Badge

@@ -1,15 +1,15 @@
-import Meditation from "@mui/icons-material/SelfImprovement";
+import CashIcon from "@mui/icons-material/AttachMoney";
 import { IconProps } from "@mui/material";
 import styled from "styled-components";
 
 type IconType = Omit<IconProps, "color"> & { color?: string };
 
-const Icon = styled(Meditation)<IconType>`
+const Icon = styled(CashIcon)<IconType>`
   color: ${(p) => p.color ?? "white"};
 `;
 
-const MeditationIcon = (props: IconType) => {
+const FinanceIcon = (props: IconType) => {
   return <Icon {...props} />;
 };
 
-export default MeditationIcon;
+export default FinanceIcon;

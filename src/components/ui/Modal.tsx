@@ -1,5 +1,7 @@
+import { COLORS } from "@/theme/theme";
 import { Button, Dialog, Flex } from "@radix-ui/themes";
-import { PropsWithChildren, ReactNode } from "react";
+import { PropsWithChildren, ReactNode, useState } from "react";
+import { ThreeDots } from "react-loader-spinner";
 
 type Props = {
   title: string;
@@ -7,8 +9,9 @@ type Props = {
   content: ReactNode;
   primaryButtonLabel?: string;
   secondaryButtonLabel?: string;
-  onPrimaryButtonClick?: () => void;
+  onPrimaryButtonClick?: () => Promise<void>;
   onSecondaryButtonClick?: () => void;
+  loading?: boolean;
 } & PropsWithChildren;
 const Modal = ({
   content,
@@ -18,10 +21,12 @@ const Modal = ({
   secondaryButtonLabel,
   primaryButtonLabel,
   onPrimaryButtonClick,
+  loading,
   children,
 }: Props) => {
+  const [open, setOpen] = useState(false);
   return (
-    <Dialog.Root>
+    <Dialog.Root open={open} onOpenChange={() => setOpen(!open)}>
       <Dialog.Trigger>{children}</Dialog.Trigger>
 
       <Dialog.Content style={{ maxWidth: 450 }}>
@@ -45,9 +50,19 @@ const Modal = ({
             </Dialog.Close>
           )}
           {primaryButtonLabel && (
-            <Dialog.Close onClick={onPrimaryButtonClick}>
-              <Button>{primaryButtonLabel}</Button>
-            </Dialog.Close>
+            <Button
+              onClick={async () => {
+                await onPrimaryButtonClick?.()
+                  .then(() => setOpen(false))
+                  .catch(() => {});
+              }}
+            >
+              {loading ? (
+                <ThreeDots color={COLORS.WHITE} width={30} />
+              ) : (
+                primaryButtonLabel
+              )}
+            </Button>
           )}
         </Flex>
       </Dialog.Content>

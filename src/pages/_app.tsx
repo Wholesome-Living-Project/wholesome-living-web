@@ -63,10 +63,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             hasBackground={false}
           >
             <Providers>
-              <LoadingGuardProvider
-                lightMode={lightMode}
-                setLightMode={setLightMode}
-              >
+              <LoadingGuardProvider setLightMode={setLightMode}>
                 <Wrapper
                   $lightMode={lightMode}
                   direction={"column"}

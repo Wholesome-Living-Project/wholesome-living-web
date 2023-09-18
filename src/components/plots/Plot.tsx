@@ -1,96 +1,139 @@
 import { SettingsPluginName } from "@/api/openapi";
-import PluginBanner from "@/components/discover/PluginBanner";
+import DashboardCardHeader from "@/components/dashboard/DashboardCardHeader";
 import OptionalWrapWith from "@/components/helpers/OptionalWrapWith";
 import PlotWrapper, { DefaultPlotProps } from "@/components/plots/PlotWrapper";
+import { CaptializedText } from "@/components/ui/CapitalizedText";
 import DashboardCard from "@/components/ui/DashboardCard";
+import LoadingCard from "@/components/ui/LoadingCard";
 import { defaultTextProps } from "@/helpers/defaultTextProps";
-import { PLUGIN_COLORS, PLUGINS } from "@/helpers/pluginList";
+import { PLUGIN_COLORS } from "@/helpers/pluginList";
 import useLightMode from "@/hooks/useLightMode";
 import { alpha } from "@/theme/alpha";
 import { COLORS } from "@/theme/theme";
-import { Flex, Heading, Text } from "@radix-ui/themes";
-import { PropsWithChildren, ReactNode } from "react";
+import { Flex } from "@radix-ui/themes";
+import { PropsWithChildren, ReactNode, useMemo, useState } from "react";
 import {
+  Crosshair,
   HorizontalGridLines,
   LineSeries,
   LineSeriesPoint,
+  MarkSeries,
   VerticalBarSeries,
   VerticalGridLines,
   XAxis,
   YAxis,
 } from "react-vis";
-import styled from "styled-components";
-
-const CaptializedText = styled(Heading)`
-  text-transform: uppercase;
-`;
 
 export type PlotProps = {
   data: (any[] | LineSeriesPoint)[];
   showInCard?: boolean;
   plugin: SettingsPluginName;
   icon: ReactNode;
-  tag: string;
+  title: string;
+  tag?: string;
   description?: string;
   plotType?: "line" | "bar";
+  showDots?: boolean;
+  loading?: boolean;
 } & DefaultPlotProps &
   PropsWithChildren;
 
 const Plot = ({
   data,
   showInCard,
+  title,
   tag,
   description,
   plugin,
   icon,
+  showDots,
+  loading,
   plotType = "line",
   ...rest
 }: PlotProps) => {
   const { lightMode } = useLightMode();
+  const [crosshairValues, setCrosshairValues] = useState<
+    any[] | (any[] & LineSeriesPoint) | undefined
+  >();
 
-  const gridStyle = {
-    stroke: lightMode ? undefined : alpha(0.4, COLORS.WHITE),
-    strokeWidth: 0.8,
-  };
+  const gridStyle = useMemo(
+    () => ({
+      stroke: lightMode ? undefined : alpha(0.4, COLORS.WHITE),
+      strokeWidth: 0.8,
+    }),
+    [lightMode]
+  );
+
+  const crosshairStyle = useMemo(
+    () => ({
+      box: { backgroundColor: "white" },
+      line: {
+        backgroundColor: lightMode ? "black" : "white",
+        opacity: 0.5,
+      },
+      title: {
+        fontSize: 12,
+      },
+    }),
+    [lightMode]
+  );
+
+  if (loading) return <LoadingCard />;
 
   return (
     <OptionalWrapWith wrap={showInCard} component={<DashboardCard />}>
-      <Flex justify={"between"} mb={"4"}>
-        <Flex direction={"column"} gap={"1"}>
-          <CaptializedText {...defaultTextProps} size={"2"}>
-            {tag}
-          </CaptializedText>
-          <Text color={"gray"} size={"2"}>
-            {description}
-          </Text>
-        </Flex>
-        <PluginBanner {...PLUGINS[plugin]} size={30} icon={icon} />
-      </Flex>
-      <PlotWrapper
-        parentMargin={showInCard ? 10 : 0}
-        parentGap={showInCard ? { x: 28, md: 28 } : { x: 0 }}
-        {...rest}
-      >
-        <VerticalGridLines style={gridStyle} />
-        <HorizontalGridLines style={gridStyle} />
-        <XAxis style={gridStyle} />
-        <YAxis style={gridStyle} />
-        {data.length > 0 ? (
-          plotType === "bar" ? (
+      <DashboardCardHeader
+        plugin={plugin}
+        title={title}
+        icon={icon}
+        tag={tag}
+        description={description}
+      />
+      {data.length > 0 ? (
+        <PlotWrapper
+          parentMargin={showInCard ? 10 : 0}
+          parentGap={showInCard ? { x: 28, md: 28 } : { x: 0 }}
+          {...rest}
+        >
+          <VerticalGridLines style={gridStyle} />
+          <HorizontalGridLines style={gridStyle} />
+          <XAxis style={gridStyle} />
+          <YAxis style={gridStyle} />
+
+          {plotType === "bar" ? (
             <VerticalBarSeries
               barWidth={0.6}
               data={data}
               color={PLUGIN_COLORS[plugin]}
+              onValueMouseOver={(value) => setCrosshairValues([value])}
+              onValueMouseOut={() => setCrosshairValues(undefined)}
             />
           ) : (
             <LineSeries data={data} color={PLUGIN_COLORS[plugin]} />
-          )
-        ) : (
-          <CaptializedText {...defaultTextProps} size={"2"}>
+          )}
+          {plotType === "line" && showDots && (
+            <MarkSeries
+              data={data}
+              onValueMouseOver={(value) => setCrosshairValues([value])}
+              onValueMouseOut={() => setCrosshairValues(undefined)}
+              color={PLUGIN_COLORS[plugin]}
+            />
+          )}
+
+          <Crosshair values={crosshairValues} style={crosshairStyle} />
+        </PlotWrapper>
+      ) : (
+        <Flex
+          align={"center"}
+          justify={"center"}
+          grow={"1"}
+          direction={"column"}
+        >
+          <CaptializedText {...defaultTextProps} size={"4"}>
             No Data
           </CaptializedText>
-        )}
-      </PlotWrapper>
+        </Flex>
+      )}
     </OptionalWrapWith>
   );
 };

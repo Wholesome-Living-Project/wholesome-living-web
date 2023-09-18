@@ -1,4 +1,4 @@
-import { UnstyledA } from "@/components/ui/UnstyledA";
+import { UnstyledA, UnstyledLink } from "@/components/ui/UnstyledA";
 import useBreakPoints from "@/hooks/useBreakPoints";
 import {
   Flex,
@@ -9,7 +9,6 @@ import {
 import { PropsWithChildren } from "react";
 import styled from "styled-components";
 import { SPACING } from "../../theme/theme";
-import OptionalLink from "../OptionalLink";
 
 const Container = styled(Flex)`
   padding: ${SPACING * 4}px 0;
@@ -23,15 +22,15 @@ const FooterLinks = styled(Flex)`
 `;
 
 type MenuItemProps = {
-  link?: string;
+  link: string;
   onClick?: () => void;
 } & PropsWithChildren;
 const MenuItem = ({ link, children, onClick }: MenuItemProps) => (
-  <OptionalLink href={link}>
+  <UnstyledLink href={link}>
     <Text color={"gray"} highContrast onClick={link ? undefined : onClick}>
       {children}
     </Text>
-  </OptionalLink>
+  </UnstyledLink>
 );
 
 type RouteType = { link: string; text: string };
