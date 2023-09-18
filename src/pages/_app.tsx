@@ -1,4 +1,6 @@
+import Header from "@/components/layout/Header";
 import { LightModeContext } from "@/hooks/useLightMode";
+import { LoadingGuardProvider } from "@/providers/LoadingGuardProvider";
 import Providers from "@/providers/Providers";
 import Theme from "@/theme/mainTheme";
 import { GlobalStyle } from "@/theme/theme";
@@ -7,13 +9,7 @@ import "@radix-ui/themes/styles.css";
 import { NextPage } from "next";
 import { AppProps } from "next/app";
 import Head from "next/head";
-import {
-  ReactElement,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { ReactElement, ReactNode, useCallback, useState } from "react";
 import "react-vis/dist/style.css";
 import styled from "styled-components";
 
@@ -50,12 +46,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     [lightMode]
   );
 
-  useEffect(() => {
-    const lm = localStorage.getItem("lightMode");
-    setLightMode(lm === "true");
-    setAppIsReady(true);
-  }, []);
-
   return (
     <>
       <Head>
@@ -73,18 +63,22 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             hasBackground={false}
           >
             <Providers>
-              {appIsReady ? (
+              <LoadingGuardProvider
+                lightMode={lightMode}
+                setLightMode={setLightMode}
+              >
                 <Wrapper
                   $lightMode={lightMode}
                   direction={"column"}
                   grow={"1"}
                   pb={"8"}
                 >
-                  <Flex direction={"row"} grow={"1"}>
+                  <Flex direction={"column"} grow={"1"}>
+                    <Header />
                     {getLayout(<Component {...pageProps} />)}
                   </Flex>
                 </Wrapper>
-              ) : null}
+              </LoadingGuardProvider>
             </Providers>
             {/*  <ThemePanel />*/}
           </RadixTheme>

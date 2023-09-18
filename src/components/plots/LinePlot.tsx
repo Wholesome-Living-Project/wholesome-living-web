@@ -64,7 +64,13 @@ const LinePlot = ({
         <HorizontalGridLines style={gridStyle} />
         <XAxis style={gridStyle} />
         <YAxis style={gridStyle} />
-        <LineSeries data={data} color={PLUGIN_COLORS[plugin]} />
+        {data.length > 0 ? (
+          <LineSeries data={data} color={PLUGIN_COLORS[plugin]} />
+        ) : (
+          <CaptializedText {...defaultTextProps} size={"2"}>
+            No Data
+          </CaptializedText>
+        )}
       </Plot>
     </OptionalWrapWith>
   );

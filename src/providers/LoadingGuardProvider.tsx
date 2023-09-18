@@ -1,4 +1,3 @@
-import { UserUserDB } from "@/api/openapi";
 import { useAuthentication } from "@/providers/AuthenticationProvider";
 import {
   PropsWithChildren,
@@ -8,36 +7,39 @@ import {
   useState,
 } from "react";
 
-export type UserType = { firebaseUID: string } & UserUserDB;
 type LoadingType = {
-  isInitialLoading: boolean;
+  appIsReady: boolean;
 };
+
+const ADDITIONAL_LOADING_TIME = 500;
 
 const LoadingContext = createContext<LoadingType>({} as LoadingType);
 
 export const useLoadingGuard = () => useContext(LoadingContext);
 
-const useProvideLoading = (): LoadingType => {
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
+type Props = {
+  lightMode: boolean;
+  setLightMode: (st: boolean) => void;
+} & PropsWithChildren;
+export const LoadingGuardProvider = ({
+  lightMode,
+  setLightMode,
+  children,
+}: Props) => {
   const { loading } = useAuthentication();
+  const [appIsReady, setAppIsReady] = useState(false);
 
-  // handles redirecting to app/home if user is logged and vice versa
   useEffect(() => {
+    const lm = localStorage.getItem("lightMode");
+    setLightMode(lm === "true");
     if (!loading) {
-      setIsInitialLoading(false);
+      setTimeout(() => setAppIsReady(true), ADDITIONAL_LOADING_TIME);
     }
-  }, [loading]);
+  }, [loading, setLightMode]);
 
-  return {
-    isInitialLoading,
-  };
-};
-
-export const LoadingGuardProvider = ({ children }: PropsWithChildren) => {
-  const providedLoading = useProvideLoading();
   return (
-    <LoadingContext.Provider value={providedLoading}>
-      {children}
+    <LoadingContext.Provider value={{ appIsReady }}>
+      {appIsReady ? children : null}
     </LoadingContext.Provider>
   );
 };

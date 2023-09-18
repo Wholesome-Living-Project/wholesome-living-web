@@ -3,22 +3,84 @@ import {
   navigationAppLinks,
   navigationRootLinks,
 } from "@/components/layout/Header";
+import LoginForm from "@/components/ui/LoginForm";
+import Modal from "@/components/ui/Modal";
+import { defaultTextProps } from "@/helpers/defaultTextProps";
 import useLightMode from "@/hooks/useLightMode";
-import { Popover } from "@radix-ui/themes";
+import { useAuthentication } from "@/providers/AuthenticationProvider";
+import { Button, Flex, Popover, Text } from "@radix-ui/themes";
 import { PropsWithChildren } from "react";
 
-type Props = { isHomeHeader?: boolean } & PropsWithChildren;
-const MobileMenu = ({ children, isHomeHeader }: Props) => {
+type Props = {
+  isHomeHeader?: boolean;
+  email: string;
+  password: string;
+  setEmail: (email: string) => void;
+  setPassword: (password: string) => void;
+} & PropsWithChildren;
+const MobileMenu = ({
+  setPassword,
+  password,
+  email,
+  setEmail,
+  isHomeHeader,
+  children,
+}: Props) => {
   const { lightMode } = useLightMode();
+  const { signOutUser, signInWithEmailAndPassword } = useAuthentication();
+
   return (
     <Popover.Root>
       <Popover.Trigger>{children}</Popover.Trigger>
       <Popover.Content>
-        <Links
-          links={isHomeHeader ? navigationRootLinks : navigationAppLinks}
-          lightMode={lightMode}
+        <Flex
           direction={"column"}
-        />
+          gap={"6"}
+          justify={"center"}
+          align={"center"}
+        >
+          <Links
+            links={isHomeHeader ? navigationRootLinks : navigationAppLinks}
+            lightMode={lightMode}
+            direction={"column"}
+          />
+          {isHomeHeader &&
+            process.env.NEXT_PUBLIC_DEACTIVATE_LOGIN_BUTTONS === "true" && (
+              <Flex gap={"3"}>
+                <Modal
+                  title={"Login"}
+                  description={"Use your wholesome living account to log in"}
+                  content={
+                    <LoginForm
+                      email={email}
+                      setEmail={setEmail}
+                      password={password}
+                      setPassword={setPassword}
+                    />
+                  }
+                  primaryButtonLabel={"Login"}
+                  onPrimaryButtonClick={() =>
+                    signInWithEmailAndPassword({
+                      email: email,
+                      password: password,
+                    })
+                  }
+                  secondaryButtonLabel={"Cancel"}
+                >
+                  <Button variant={"ghost"} size={"3"}>
+                    Login
+                  </Button>
+                </Modal>
+              </Flex>
+            )}
+          {!isHomeHeader && (
+            <Button size={"3"} variant={"ghost"} onClick={() => signOutUser()}>
+              <Flex direction={"row"} gap={"1"} align={"center"}>
+                <Text {...defaultTextProps}>Logout</Text>
+              </Flex>
+            </Button>
+          )}
+        </Flex>
       </Popover.Content>
     </Popover.Root>
   );

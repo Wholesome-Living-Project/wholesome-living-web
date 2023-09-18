@@ -15,6 +15,10 @@ const TextWRapper = styled(Flex)`
   position: relative;
 `;
 
+const StyledImage = styled(Image)<{ pos?: "center" | "left" }>`
+  object-position: ${(p) => p.pos ?? "center"};
+`;
+
 type Props = {
   title: string;
   text: string;
@@ -27,14 +31,14 @@ const TextWithImageSection = ({ text, src, reverse, title }: Props) => {
     <Wrapper gap={"6"} columns={isLessThanMedium ? "1" : "2"} mb={"4"}>
       {src && reverse && !isLessThanMedium && (
         <ImageContainer align={"center"}>
-          <Image
+          <StyledImage
             alt={""}
             src={src}
             objectFit={"contain"}
             fill={!isLessThanMedium}
             width={isLessThanMedium ? 300 : undefined}
             height={isLessThanMedium ? 300 : undefined}
-            objectPosition={"left"}
+            pos={"left"}
           />
         </ImageContainer>
       )}
@@ -55,14 +59,14 @@ const TextWithImageSection = ({ text, src, reverse, title }: Props) => {
       </TextWRapper>
       {src && (!reverse || isLessThanMedium) && (
         <ImageContainer>
-          <Image
+          <StyledImage
             alt={""}
             src={src}
             objectFit={"contain"}
             fill={!isLessThanMedium}
             width={isLessThanMedium ? 300 : undefined}
             height={isLessThanMedium ? 300 : undefined}
-            objectPosition={"center"}
+            pos={"center"}
           />
         </ImageContainer>
       )}

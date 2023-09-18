@@ -1,7 +1,10 @@
 import OptionalLink from "@/components/OptionalLink";
 import MobileMenu from "@/components/layout/MobileMenu";
+import LoginForm from "@/components/ui/LoginForm";
+import Modal from "@/components/ui/Modal";
 import useBreakPoints from "@/hooks/useBreakPoints";
 import useLightMode from "@/hooks/useLightMode";
+import { useUser } from "@/hooks/useUser";
 import { useAuthentication } from "@/providers/AuthenticationProvider";
 import { alpha } from "@/theme/alpha";
 import { SPACING } from "@/theme/theme";
@@ -17,6 +20,7 @@ import {
   Text,
 } from "@radix-ui/themes";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import styled, { useTheme } from "styled-components";
 
 const HeaderLink = styled.div<{
@@ -60,10 +64,10 @@ export const navigationAppLinks: NavigationLinkType[] = [
     link: "/app",
     label: "Dashboard",
   },
-  {
+  /*{
     link: "/app/analytics",
     label: "Analytics",
-  },
+  },*/
 ];
 
 export const navigationRootLinks: NavigationLinkType[] = [
@@ -85,13 +89,13 @@ type Props = {
   isHomeHeader?: boolean;
 };
 
-const Header = ({ isHomeHeader }: Props) => {
+const Header = () => {
   const { toggleLightMode, lightMode } = useLightMode();
-  const {
-    createUserWithEmailAndPassword,
-    signOutUser,
-    signInWithEmailAndPassword,
-  } = useAuthentication();
+  const { firebaseUser } = useUser();
+  const { signOutUser, signInWithEmailAndPassword } = useAuthentication();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const { isLessThanMedium } = useBreakPoints();
 
@@ -112,7 +116,13 @@ const Header = ({ isHomeHeader }: Props) => {
           </OptionalLink>
 
           {isLessThanMedium ? (
-            <MobileMenu isHomeHeader={isHomeHeader}>
+            <MobileMenu
+              isHomeHeader={!firebaseUser}
+              email={email}
+              setEmail={setEmail}
+              password={password}
+              setPassword={setPassword}
+            >
               <BurgerIcon
                 fontSize={"large"}
                 color={"inherit"}
@@ -122,40 +132,41 @@ const Header = ({ isHomeHeader }: Props) => {
           ) : (
             <>
               <Links
-                links={isHomeHeader ? navigationRootLinks : navigationAppLinks}
+                links={!firebaseUser ? navigationRootLinks : navigationAppLinks}
                 lightMode={lightMode}
               />
               <Flex gap={"6"} align={"center"}>
-                {isHomeHeader &&
+                {!firebaseUser &&
                   process.env.NEXT_PUBLIC_DEACTIVATE_LOGIN_BUTTONS ===
                     "true" && (
                     <Flex gap={"3"}>
-                      <Button
-                        onClick={() =>
+                      <Modal
+                        title={"Login"}
+                        description={
+                          "Use your wholesome living account to log in"
+                        }
+                        content={
+                          <LoginForm
+                            email={email}
+                            setEmail={setEmail}
+                            password={password}
+                            setPassword={setPassword}
+                          />
+                        }
+                        primaryButtonLabel={"Login"}
+                        onPrimaryButtonClick={() =>
                           signInWithEmailAndPassword({
-                            email: "remus.nichiteanu@hotmail.com",
-                            password: "123456",
+                            email: email,
+                            password: password,
                           })
                         }
+                        secondaryButtonLabel={"Cancel"}
                       >
-                        Login
-                      </Button>{" "}
-                      <Button
-                        onClick={() =>
-                          createUserWithEmailAndPassword({
-                            email: "remus.nichiteanu123@hotmail.com",
-                            password: "123456",
-                            lastName: "Nichiteanu",
-                            firstName: "Remus",
-                            dateOfBirth: "2023-07-1996",
-                          })
-                        }
-                      >
-                        Register
-                      </Button>
+                        <Button>Login</Button>
+                      </Modal>
                     </Flex>
                   )}
-                {!isHomeHeader && (
+                {firebaseUser && (
                   <IconButton
                     size={"3"}
                     variant={"ghost"}

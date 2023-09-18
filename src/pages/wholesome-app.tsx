@@ -96,7 +96,8 @@ const WholesomeApp = () => {
                     : "/assets/images/app-store-badge-light.png"
                 }
                 alt={"app store link"}
-                fill={true}
+                fill
+                sizes={"700px"}
               />
             </UnstyledA>
           </BadgeContainer>
@@ -108,7 +109,8 @@ const WholesomeApp = () => {
               <Badge
                 src={"/assets/images/google-play-store-badge.png"}
                 alt={"app store link"}
-                fill={true}
+                fill
+                sizes={"700px"}
               />
             </UnstyledA>
           </BadgeContainer>
@@ -121,6 +123,7 @@ const WholesomeApp = () => {
             src={"/assets/images/app_preview.png"}
             alt={"app preview"}
             fill
+            sizes={"1500px"}
           />
         </ImageContainer>
       )}
