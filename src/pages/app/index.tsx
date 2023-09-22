@@ -61,9 +61,13 @@ const Dashboard = () => {
 
   const { levelMap, experienceMap } = useLevels();
   useEffect(() => {
-    console.log("Level Map:", levelMap);
-    console.log("Experience Map:", experienceMap);
+    //console.log("Level Map:", levelMap);
+    //console.log("Experience Map:", experienceMap);
   }, [levelMap, experienceMap]);
+
+  const financeLevel = levelMap?.finance || 0;
+  const meditationLevel = levelMap?.meditation || 0;
+  const elevatorLevel = levelMap?.elevator || 0;
 
   return (
     <FlexContainer direction={"column"} gap={"6"}>
@@ -109,6 +113,30 @@ const Dashboard = () => {
           {getFormattedTime(totalMeditationLastWeek)}
         </SummaryCard>
       </Grid>
+      <Grid columns={{ sm: "2", md: "4", initial: "1" }} gap={"6"}>
+        <SummaryCard
+          tag={"Finance Level"}
+          plugin={"finance"}
+          icon={<FinanceIcon color={"white"} fontSize={"small"} />}
+        >
+          {financeLevel}
+        </SummaryCard>
+        <SummaryCard
+          tag={"Meditation Level"}
+          plugin={"meditation"}
+          icon={<MeditationIcon color={"white"} fontSize={"small"} />}
+        >
+          {meditationLevel}
+        </SummaryCard>
+        <SummaryCard
+          tag={"Elevator Level"}
+          plugin={"elevator"}
+          icon={<ElevatorIcon fontSize={"small"} />}
+        >
+          {elevatorLevel}
+        </SummaryCard>
+      </Grid>
+
       <Grid columns={{ md: "2", initial: "1" }} gap={"6"}>
         <Plot
           width={{ x: "half", md: "full" }}
