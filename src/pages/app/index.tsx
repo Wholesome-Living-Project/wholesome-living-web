@@ -9,9 +9,10 @@ import { getFormattedTime } from "@/helpers/getFormattedTime";
 import AppLayout from "@/layouts/app.layout";
 import { useElevator } from "@/providers/ElevatorProvider";
 import { useFinance } from "@/providers/FinanceProvider";
+import { useLevels } from "@/providers/LevelsProvider";
 import { useMeditate } from "@/providers/MeditationProvider";
 import { Flex, Grid, Heading, Text } from "@radix-ui/themes";
-import { ReactElement, useCallback } from "react";
+import { ReactElement, useCallback, useEffect } from "react";
 import styled from "styled-components";
 
 const FlexContainer = styled(Flex)`
@@ -57,6 +58,12 @@ const Dashboard = () => {
     await saveSpending(newEntry);
     await getSpendings();
   }, [getSpendings, saveSpending]);
+
+  const { levelMap, experienceMap } = useLevels();
+  useEffect(() => {
+    console.log("Level Map:", levelMap);
+    console.log("Experience Map:", experienceMap);
+  }, [levelMap, experienceMap]);
 
   return (
     <FlexContainer direction={"column"} gap={"6"}>
