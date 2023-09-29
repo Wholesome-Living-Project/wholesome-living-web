@@ -185,7 +185,7 @@ const Dashboard = () => {
           plugin={"elevator"}
           icon={<ElevatorIcon fontSize={"small"} />}
           title={"Daily Stairs"}
-          description={"The total height you have used the stairs and elevator"}
+          description={"The total stairs you have used"}
           width={{ x: "half", md: "full" }}
           xType={"ordinal"}
           //@ts-ignore
