@@ -9,9 +9,10 @@ import { getFormattedTime } from "@/helpers/getFormattedTime";
 import AppLayout from "@/layouts/app.layout";
 import { useElevator } from "@/providers/ElevatorProvider";
 import { useFinance } from "@/providers/FinanceProvider";
+import { useLevels } from "@/providers/LevelsProvider";
 import { useMeditate } from "@/providers/MeditationProvider";
 import { Flex, Grid, Heading, Text } from "@radix-ui/themes";
-import { ReactElement, useCallback } from "react";
+import { ReactElement, useCallback, useEffect } from "react";
 import styled from "styled-components";
 
 const FlexContainer = styled(Flex)`
@@ -58,6 +59,16 @@ const Dashboard = () => {
     await getSpendings();
   }, [getSpendings, saveSpending]);
 
+  const { levelMap, experienceMap } = useLevels();
+  useEffect(() => {
+    //console.log("Level Map:", levelMap);
+    //console.log("Experience Map:", experienceMap);
+  }, [levelMap, experienceMap]);
+
+  const financeLevel = levelMap?.finance || 0;
+  const meditationLevel = levelMap?.meditation || 0;
+  const elevatorLevel = levelMap?.elevator || 0;
+
   return (
     <FlexContainer direction={"column"} gap={"6"}>
       <Grid gap={"4"} columns={{ initial: "1", sm: "2" }} mb={"6"}>
@@ -102,6 +113,30 @@ const Dashboard = () => {
           {getFormattedTime(totalMeditationLastWeek)}
         </SummaryCard>
       </Grid>
+      <Grid columns={{ sm: "2", md: "4", initial: "1" }} gap={"6"}>
+        <SummaryCard
+          tag={"Finance Level"}
+          plugin={"finance"}
+          icon={<FinanceIcon color={"white"} fontSize={"small"} />}
+        >
+          {financeLevel}
+        </SummaryCard>
+        <SummaryCard
+          tag={"Meditation Level"}
+          plugin={"meditation"}
+          icon={<MeditationIcon color={"white"} fontSize={"small"} />}
+        >
+          {meditationLevel}
+        </SummaryCard>
+        <SummaryCard
+          tag={"Elevator Level"}
+          plugin={"elevator"}
+          icon={<ElevatorIcon fontSize={"small"} />}
+        >
+          {elevatorLevel}
+        </SummaryCard>
+      </Grid>
+
       <Grid columns={{ md: "2", initial: "1" }} gap={"6"}>
         <Plot
           width={{ x: "half", md: "full" }}
@@ -150,7 +185,7 @@ const Dashboard = () => {
           plugin={"elevator"}
           icon={<ElevatorIcon fontSize={"small"} />}
           title={"Daily Stairs"}
-          description={"The total height you have used the stairs and elevator"}
+          description={"The total stairs you have used"}
           width={{ x: "half", md: "full" }}
           xType={"ordinal"}
           //@ts-ignore

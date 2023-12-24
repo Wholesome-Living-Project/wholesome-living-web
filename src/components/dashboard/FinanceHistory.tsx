@@ -18,7 +18,7 @@ const FinanceHistory = ({ tableMaxHeight }: Props) => {
         title={"Spending History"}
         plugin={"finance"}
         icon={<FinanceIcon fontSize={"small"} />}
-        description={"All the money you have spend so far"}
+        description={"All the money you have spent so far"}
       />
       <Inset>
         <Table data={spendingsByDate} maxHeight={tableMaxHeight} />
