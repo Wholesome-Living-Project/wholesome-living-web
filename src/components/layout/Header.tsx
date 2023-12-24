@@ -92,7 +92,7 @@ type Props = {
 
 const Header = () => {
   const { toggleLightMode, lightMode } = useLightMode();
-  const { firebaseUser } = useUser();
+  const { firebaseUser, user } = useUser();
   const { signOutUser, signInWithEmailAndPassword } = useAuthentication();
   const [loadingLogin, setLoadingLogin] = useState(false);
   const router = useRouter();
@@ -194,7 +194,11 @@ const Header = () => {
           ) : (
             <>
               <Links
-                links={!firebaseUser ? navigationRootLinks : navigationAppLinks}
+                links={
+                  !firebaseUser || !user
+                    ? navigationRootLinks
+                    : navigationAppLinks
+                }
                 lightMode={lightMode}
               />
               <Flex gap={"6"} align={"center"}>
