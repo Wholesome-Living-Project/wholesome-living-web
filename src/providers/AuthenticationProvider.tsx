@@ -1,27 +1,27 @@
-import { UserUpdateUserRequest, UserUserDB } from "@/api/openapi";
+import { UserUserDB } from "@/api/openapi";
 import { api } from "@/api/requests";
 import {
   clearUserIdFromLocalStorage,
-  getUserIdFromLocalStorage,
   setUserIdToLocalStorage,
 } from "@/helpers/localStorageHelper";
-import { useAuth } from "@/hooks/useAuth";
-import { useEffectOnce } from "@/hooks/useEffectOnce";
-import { signIn, signOut, signUp } from "@/lib/auth";
+import { signIn, signOut } from "@/lib/auth";
+import { auth } from "@/lib/firebase";
+import { User, onAuthStateChanged } from "firebase/auth";
 import {
   PropsWithChildren,
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useState,
 } from "react";
 
 export type UserType = { firebaseUID: string } & UserUserDB;
 type AuthenticationType = {
   user: UserType | null;
+  currentFirebaseUser: User | null;
   loading: boolean;
-  getUser: () => void;
-  patchUser: (request: UserUpdateUserRequest) => Promise<UserType | undefined>;
+  getUser: () => Promise<UserType | undefined>;
   signOutUser: () => void;
   signInWithEmailAndPassword: ({
     email,
@@ -29,19 +29,6 @@ type AuthenticationType = {
   }: {
     email: string;
     password: string;
-  }) => Promise<UserType | undefined>;
-  createUserWithEmailAndPassword: ({
-    email,
-    password,
-    firstName,
-    lastName,
-    dateOfBirth,
-  }: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string;
   }) => Promise<UserType | undefined>;
 };
 
@@ -52,7 +39,9 @@ export const useAuthentication = () => useContext(AuthContext);
 const useProvideAuth = (): AuthenticationType => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<UserType | null>(null);
-  const currentFirebaseUser = useAuth();
+  const [currentFirebaseUser, setCurrentFirebaseUser] = useState<User | null>(
+    null
+  );
 
   const getUser = useCallback(
     async (uid?: string) => {
@@ -60,8 +49,6 @@ const useProvideAuth = (): AuthenticationType => {
         const id = uid ?? currentFirebaseUser?.uid;
         if (id) {
           try {
-            setLoading(true);
-
             const { data } = await api.userApi.usersIdGet(id);
             console.log("got user ", data.email);
 
@@ -70,15 +57,11 @@ const useProvideAuth = (): AuthenticationType => {
               firebaseUID: id,
             };
             setUser(u);
-            if (id) {
-              setUserIdToLocalStorage(id);
-            }
 
+            if (id) setUserIdToLocalStorage(id);
             return u;
           } catch (e) {
             console.log("error getting user", e);
-          } finally {
-            setLoading(false);
           }
         }
       } else {
@@ -88,111 +71,65 @@ const useProvideAuth = (): AuthenticationType => {
     [currentFirebaseUser?.uid]
   );
 
-  const patchUser = useCallback(
-    async (request: UserUpdateUserRequest) => {
-      try {
-        await api.userApi.usersPut(request);
-
-        return await getUser(currentFirebaseUser?.uid);
-      } catch (e) {
-        console.log("error patching user", e);
-      }
-    },
-    [currentFirebaseUser?.uid, getUser]
-  );
-
-  const createUserWithEmailAndPassword = useCallback(
-    async ({
-      email,
-      password,
-      firstName,
-      lastName,
-      dateOfBirth,
-    }: {
-      email: string;
-      password: string;
-      firstName: string;
-      lastName: string;
-      dateOfBirth: string;
-    }) => {
-      const creds = await signUp(email, password);
-
-      console.log(creds);
-      try {
-        if (creds.data) {
-          await api.userApi.usersPost({
-            firstName,
-            email,
-            lastName,
-            dateOfBirth,
-            id: creds.data.user.uid,
-          });
-        } else if (
-          creds.message === "Firebase: Error (auth/email-already-in-use)."
-        ) {
-          console.log("email already in use.");
-          const existing = await signIn(email, password);
-
-          if (existing?.user.uid) {
-            console.log("trying to create user with existing firebase user");
-            await api.userApi.usersPost({
-              firstName,
-              email,
-              lastName,
-              dateOfBirth,
-              id: existing.user.uid,
-            });
-          }
-        }
-      } catch (e) {
-        console.log(e);
-      }
-
-      return getUser(creds.data?.user.uid);
-    },
-    [getUser]
-  );
-
   const signOutUser = useCallback(async () => {
     try {
       await signOut();
-      clearUserIdFromLocalStorage();
-      setUser(null);
     } catch (e) {
       /* do nothing as user is probably not logged in */
     } finally {
       setUser(null);
+      clearUserIdFromLocalStorage();
     }
   }, []);
 
   const signInWithEmailAndPassword = useCallback(
     async ({ email, password }: { email: string; password: string }) => {
       const fbUser = await signIn(email, password);
+
       return getUser(fbUser?.user.uid);
     },
     [getUser]
   );
 
   const getInitialUser = useCallback(async () => {
-    const existingId = getUserIdFromLocalStorage();
-    // if user has not been initialized yet (via firebase) we do not create it on app start
-    if (!currentFirebaseUser?.uid && !existingId) return;
-    currentFirebaseUser?.uid && (await getUser(currentFirebaseUser?.uid));
-    existingId && (await getUser(existingId));
-  }, [currentFirebaseUser?.uid, getUser]);
+    try {
+      onAuthStateChanged(
+        auth,
+        async (user) => {
+          setCurrentFirebaseUser(user);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    } catch (e) {
+      console.log(e);
+    }
 
-  useEffectOnce(() => {
+    // if user has not been initialized yet (via firebase) we do not create it on app start
+    if (!currentFirebaseUser?.uid) return;
+
+    try {
+      setLoading(true);
+      await getUser(currentFirebaseUser.uid);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentFirebaseUser, getUser]);
+
+  useEffect(() => {
     getInitialUser();
-  });
+  }, [getInitialUser]);
 
   return {
     user,
+    currentFirebaseUser,
     loading,
     getUser,
-    patchUser,
     signOutUser,
     signInWithEmailAndPassword,
-    createUserWithEmailAndPassword,
   };
 };
 

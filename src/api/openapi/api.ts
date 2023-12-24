@@ -276,13 +276,13 @@ export interface ProgressResponse {
 /**
  * 
  * @export
- * @interface SettingsCreateInvestmentResponse
+ * @interface SettingsCreateOnboardingResponse
  */
-export interface SettingsCreateInvestmentResponse {
+export interface SettingsCreateOnboardingResponse {
     /**
      * 
      * @type {string}
-     * @memberof SettingsCreateInvestmentResponse
+     * @memberof SettingsCreateOnboardingResponse
      */
     'id'?: string;
 }
@@ -299,108 +299,24 @@ export interface SettingsCreateSettingsRequest {
      */
     'elevator'?: SettingsElevatorSettings;
     /**
-     * A list with the Plugins that the user has enabled.
+     * 
      * @type {Array<SettingsPluginName>}
      * @memberof SettingsCreateSettingsRequest
      */
     'enabledPlugins'?: Array<SettingsPluginName>;
     /**
      * 
-     * @type {SettingsCreateSettingsRequestFinance}
+     * @type {SettingsFinanceSettings}
      * @memberof SettingsCreateSettingsRequest
      */
-    'finance'?: SettingsCreateSettingsRequestFinance;
+    'finance'?: SettingsFinanceSettings;
     /**
      * 
-     * @type {SettingsCreateSettingsRequestMeditation}
+     * @type {SettingsMeditationSettings}
      * @memberof SettingsCreateSettingsRequest
      */
-    'meditation'?: SettingsCreateSettingsRequestMeditation;
+    'meditation'?: SettingsMeditationSettings;
 }
-/**
- * The user\'s settings for the finance plugin.
- * @export
- * @interface SettingsCreateSettingsRequestFinance
- */
-export interface SettingsCreateSettingsRequestFinance {
-    /**
-     * 
-     * @type {number}
-     * @memberof SettingsCreateSettingsRequestFinance
-     */
-    'amountNotifications'?: number;
-    /**
-     * The user\'s investment goal.
-     * @type {number}
-     * @memberof SettingsCreateSettingsRequestFinance
-     */
-    'investmentGoal'?: number;
-    /**
-     * The user\'s investment time goal.
-     * @type {number}
-     * @memberof SettingsCreateSettingsRequestFinance
-     */
-    'investmentTimeGoal'?: number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof SettingsCreateSettingsRequestFinance
-     */
-    'notifications'?: boolean;
-    /**
-     * 
-     * @type {SettingsNotificationType}
-     * @memberof SettingsCreateSettingsRequestFinance
-     */
-    'periodNotifications'?: SettingsNotificationType;
-    /**
-     * 
-     * @type {SettingsStrategyType}
-     * @memberof SettingsCreateSettingsRequestFinance
-     */
-    'strategy'?: SettingsStrategyType;
-    /**
-     * 
-     * @type {number}
-     * @memberof SettingsCreateSettingsRequestFinance
-     */
-    'strategyAmount'?: number;
-}
-
-
-/**
- * The user\'s settings for the meditation plugin.
- * @export
- * @interface SettingsCreateSettingsRequestMeditation
- */
-export interface SettingsCreateSettingsRequestMeditation {
-    /**
-     * 
-     * @type {number}
-     * @memberof SettingsCreateSettingsRequestMeditation
-     */
-    'amountNotifications'?: number;
-    /**
-     * The user\'s meditation time goal.
-     * @type {number}
-     * @memberof SettingsCreateSettingsRequestMeditation
-     */
-    'meditationTimeGoal'?: number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof SettingsCreateSettingsRequestMeditation
-     */
-    'notifications'?: boolean;
-    /**
-     * 
-     * @type {SettingsNotificationType}
-     * @memberof SettingsCreateSettingsRequestMeditation
-     */
-    'periodNotifications'?: SettingsNotificationType;
-}
-
-
 /**
  * 
  * @export
@@ -447,13 +363,13 @@ export interface SettingsFinanceSettings {
      */
     'amountNotifications'?: number;
     /**
-     * The user\'s investment goal.
+     * 
      * @type {number}
      * @memberof SettingsFinanceSettings
      */
     'investmentGoal'?: number;
     /**
-     * The user\'s investment time goal.
+     * 
      * @type {number}
      * @memberof SettingsFinanceSettings
      */
@@ -488,33 +404,39 @@ export interface SettingsFinanceSettings {
 /**
  * 
  * @export
- * @interface SettingsGetSettingsResponse
+ * @interface SettingsGetPluginSettingResponse
  */
-export interface SettingsGetSettingsResponse {
+export interface SettingsGetPluginSettingResponse {
     /**
      * 
      * @type {SettingsElevatorSettings}
-     * @memberof SettingsGetSettingsResponse
+     * @memberof SettingsGetPluginSettingResponse
      */
     'elevator'?: SettingsElevatorSettings;
     /**
-     * A list with the Plugins that the user has enabled.
+     * 
      * @type {Array<SettingsPluginName>}
-     * @memberof SettingsGetSettingsResponse
+     * @memberof SettingsGetPluginSettingResponse
      */
     'enabledPlugins'?: Array<SettingsPluginName>;
     /**
      * 
-     * @type {SettingsCreateSettingsRequestFinance}
-     * @memberof SettingsGetSettingsResponse
+     * @type {SettingsFinanceSettings}
+     * @memberof SettingsGetPluginSettingResponse
      */
-    'finance'?: SettingsCreateSettingsRequestFinance;
+    'finance'?: SettingsFinanceSettings;
     /**
      * 
-     * @type {SettingsCreateSettingsRequestMeditation}
-     * @memberof SettingsGetSettingsResponse
+     * @type {string}
+     * @memberof SettingsGetPluginSettingResponse
      */
-    'meditation'?: SettingsCreateSettingsRequestMeditation;
+    'id'?: string;
+    /**
+     * 
+     * @type {SettingsMeditationSettings}
+     * @memberof SettingsGetPluginSettingResponse
+     */
+    'meditation'?: SettingsMeditationSettings;
 }
 /**
  * 
@@ -529,7 +451,7 @@ export interface SettingsMeditationSettings {
      */
     'amountNotifications'?: number;
     /**
-     * The user\'s meditation time goal.
+     * 
      * @type {number}
      * @memberof SettingsMeditationSettings
      */
@@ -1511,8 +1433,8 @@ export class ProgressApi extends BaseAPI {
 export const SettingsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Delete settings for a user.
-         * @summary Delete settings of a user.
+         * Delete plugin-settings for a user if plugin is \"\" delete all settings.
+         * @summary Delete plugin-settings of a user.
          * @param {string} userId User ID
          * @param {string} [plugin] Plugin name
          * @param {*} [options] Override http request option.
@@ -1725,8 +1647,8 @@ export const SettingsApiAxiosParamCreator = function (configuration?: Configurat
             };
         },
         /**
-         * fetch settings for a user.
-         * @summary Get settings for a user.
+         * fetch plugin settings for a user.
+         * @summary Get plugin settings for a user.
          * @param {string} userId User ID
          * @param {string} [plugin] Plugin name
          * @param {*} [options] Override http request option.
@@ -1906,8 +1828,8 @@ export const SettingsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = SettingsApiAxiosParamCreator(configuration)
     return {
         /**
-         * Delete settings for a user.
-         * @summary Delete settings of a user.
+         * Delete plugin-settings for a user if plugin is \"\" delete all settings.
+         * @summary Delete plugin-settings of a user.
          * @param {string} userId User ID
          * @param {string} [plugin] Plugin name
          * @param {*} [options] Override http request option.
@@ -1966,14 +1888,14 @@ export const SettingsApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * fetch settings for a user.
-         * @summary Get settings for a user.
+         * fetch plugin settings for a user.
+         * @summary Get plugin settings for a user.
          * @param {string} userId User ID
          * @param {string} [plugin] Plugin name
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async settingsGet(userId: string, plugin?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SettingsGetSettingsResponse>> {
+        async settingsGet(userId: string, plugin?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SettingsGetPluginSettingResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.settingsGet(userId, plugin, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -2009,7 +1931,7 @@ export const SettingsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async settingsPost(userId: string, settings: SettingsCreateSettingsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SettingsCreateInvestmentResponse>> {
+        async settingsPost(userId: string, settings: SettingsCreateSettingsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SettingsCreateOnboardingResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.settingsPost(userId, settings, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -2024,8 +1946,8 @@ export const SettingsApiFactory = function (configuration?: Configuration, baseP
     const localVarFp = SettingsApiFp(configuration)
     return {
         /**
-         * Delete settings for a user.
-         * @summary Delete settings of a user.
+         * Delete plugin-settings for a user if plugin is \"\" delete all settings.
+         * @summary Delete plugin-settings of a user.
          * @param {string} userId User ID
          * @param {string} [plugin] Plugin name
          * @param {*} [options] Override http request option.
@@ -2079,14 +2001,14 @@ export const SettingsApiFactory = function (configuration?: Configuration, baseP
             return localVarFp.settingsFinancePut(userId, settings, options).then((request) => request(axios, basePath));
         },
         /**
-         * fetch settings for a user.
-         * @summary Get settings for a user.
+         * fetch plugin settings for a user.
+         * @summary Get plugin settings for a user.
          * @param {string} userId User ID
          * @param {string} [plugin] Plugin name
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        settingsGet(userId: string, plugin?: string, options?: any): AxiosPromise<SettingsGetSettingsResponse> {
+        settingsGet(userId: string, plugin?: string, options?: any): AxiosPromise<SettingsGetPluginSettingResponse> {
             return localVarFp.settingsGet(userId, plugin, options).then((request) => request(axios, basePath));
         },
         /**
@@ -2119,7 +2041,7 @@ export const SettingsApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        settingsPost(userId: string, settings: SettingsCreateSettingsRequest, options?: any): AxiosPromise<SettingsCreateInvestmentResponse> {
+        settingsPost(userId: string, settings: SettingsCreateSettingsRequest, options?: any): AxiosPromise<SettingsCreateOnboardingResponse> {
             return localVarFp.settingsPost(userId, settings, options).then((request) => request(axios, basePath));
         },
     };
@@ -2133,8 +2055,8 @@ export const SettingsApiFactory = function (configuration?: Configuration, baseP
  */
 export class SettingsApi extends BaseAPI {
     /**
-     * Delete settings for a user.
-     * @summary Delete settings of a user.
+     * Delete plugin-settings for a user if plugin is \"\" delete all settings.
+     * @summary Delete plugin-settings of a user.
      * @param {string} userId User ID
      * @param {string} [plugin] Plugin name
      * @param {*} [options] Override http request option.
@@ -2198,8 +2120,8 @@ export class SettingsApi extends BaseAPI {
     }
 
     /**
-     * fetch settings for a user.
-     * @summary Get settings for a user.
+     * fetch plugin settings for a user.
+     * @summary Get plugin settings for a user.
      * @param {string} userId User ID
      * @param {string} [plugin] Plugin name
      * @param {*} [options] Override http request option.
@@ -2288,7 +2210,7 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
             };
         },
         /**
-         * delete a user by id.
+         * delete a user by id with all its progress in all plugins.
          * @summary Delete a user.
          * @param {string} id User ID
          * @param {*} [options] Override http request option.
@@ -2453,7 +2375,7 @@ export const UsersApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * delete a user by id.
+         * delete a user by id with all its progress in all plugins.
          * @summary Delete a user.
          * @param {string} id User ID
          * @param {*} [options] Override http request option.
@@ -2517,7 +2439,7 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
             return localVarFp.usersGet(options).then((request) => request(axios, basePath));
         },
         /**
-         * delete a user by id.
+         * delete a user by id with all its progress in all plugins.
          * @summary Delete a user.
          * @param {string} id User ID
          * @param {*} [options] Override http request option.
@@ -2579,7 +2501,7 @@ export class UsersApi extends BaseAPI {
     }
 
     /**
-     * delete a user by id.
+     * delete a user by id with all its progress in all plugins.
      * @summary Delete a user.
      * @param {string} id User ID
      * @param {*} [options] Override http request option.
